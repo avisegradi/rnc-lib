@@ -1,0 +1,21 @@
+// -*- mode: c++; coding: utf-8-unix -*-
+
+template<class T>
+class auto_arr_ptr
+{
+	T *_ptr;
+public:
+	auto_arr_ptr(T* ptr = 0)
+		: _ptr(ptr) {}
+	~auto_arr_ptr()
+	{
+		if (_ptr) delete [] _ptr;
+	}
+	inline T *ptr() const { return _ptr; }
+	inline operator T*() const { return _ptr; }
+	inline T *operator=(T* ptr)
+	{
+		if (_ptr) delete [] _ptr;
+		_ptr = ptr;
+	}
+};
