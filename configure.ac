@@ -46,7 +46,9 @@ AC_CHECK_FUNCS([memset munmap strerror])
 
 AC_ARG_WITH([q256], AS_HELP_STRING([--with-q256], [Use 8 bit finite field. Default: 16 bit finite field]), [], [with_q256=no])
 if test "$with_q256" != no; then
-	AC_DEFINE([Q256], [1], ["Use small field"])
+	AC_DEFINE([Q256], [1], [Use 8 bit finite field.])
+else
+	AC_DEFINE([Q256], [0], [Use 8 bit finite field.])
 fi
 
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile rnc-1.0.pc])

@@ -25,8 +25,10 @@
 #include <auto_arr_ptr>
 
 using namespace std;
-using namespace fq;
+using namespace rnc::fq;
 
+namespace rnc
+{
 namespace matrix
 {
 
@@ -244,7 +246,7 @@ void mulrow_nonblk(gpointer row, gpointer d)
 		fq_t s = 0;
 		for (k=0; k<cols1; ++k) {
 			s = add(s, fq::mul(E_(m1,i,k,cols1),
-					   E_(m2, k,j,cols2)));
+                                           E_(m2, k,j,cols2)));
 		}
 		E_(md,i,j,cols2) = s;
 	}
@@ -368,4 +370,5 @@ void rand_matr(fq_t *m, const int rows, const int cols)
 			E(m,i,j) = rand() % fq_size;
 }
 
+}
 }

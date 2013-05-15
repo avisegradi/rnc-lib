@@ -23,6 +23,8 @@
 using std::hex;
 using std::string;
 
+namespace rnc
+{
 namespace fq
 {
 
@@ -77,4 +79,5 @@ const fq_t pow_table[fq_size] =
 ;
 const fq_t * const log_table = ltab;
 
+}
 }

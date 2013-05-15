@@ -33,8 +33,8 @@
 #include <sys/time.h>
 
 using namespace std;
-using namespace fq;
-using namespace matrix;
+using namespace rnc::fq;
+using namespace rnc::matrix;
 
 template <class T>
 class SetFinally

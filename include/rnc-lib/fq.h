@@ -25,67 +25,98 @@
 #include <config.h>
 #include <stdint.h>
 
+/// Random Network Coding Library namespace
+namespace rnc
+{
+
+/**
+   \brief Finite field definition and oprations.
+
+   The finite field is represented using either 8 or 16 bit symbols. Operations
+   are implemented with offline generated power- and discrete logarithm tables.
+
+   The size of the field can only be 2^8 or 2^16 (8 bit and 16 bit finite
+   fields). The 16 bit finite field is the default, as it nearly doubles the
+   performance over fixed length blocks, and because generating a singular
+   matrix in a 16 bit finite field is much less likely than in an 8 bit
+   field. The size can be set to 8 bits by defining #Q256 to 1.
+ */
 namespace fq
 {
-#ifdef Q256
+
+/**
+   \def Q256
+   \brief Sets field size to 8 bits. (Default: 16 bits.)
+
+   If set to 1, the size of the finite field will be 8 bits. By default, it is
+   set to 0, in which case the field will be 16 bits. To set Q256 to 1, specify
+   \e --with-q256 when running ./configure
+ */
+
+#if Q256 != 0
 #pragma message ( "Using 8 bit finite field (Q256)" )
-	typedef uint8_t fq_t;
+        typedef uint8_t fq_t; ///< Finite field type
 #define fq_size 256
 #define fq_groupsize 255
 #else
 #pragma message ( "Using 16 bit finite field (Q65536)" )
-	typedef uint16_t fq_t;
+        typedef uint16_t fq_t;
 #define fq_size 65536
 #define fq_groupsize 65535
 #endif //Q256
 
-	extern const fq_t * const log_table;
-	extern const fq_t pow_table[fq_size];
+        /// \brief Discrete logarithm table
+        extern const fq_t * const log_table;
+        /// \brief Power table
+        extern const fq_t pow_table[fq_size];
 
-	void init();
+        /** \brief Initialize power- and logtables.
+         */
+        void init();
 
-	inline fq_t mul(fq_t a, fq_t b) {
-		if (a&&b)
-		{
-			register int t = log_table[a] + log_table[b];
-			if (t>fq_groupsize) t-=fq_groupsize;
-			return pow_table[t];
-		}
-		else
-			return 0;
-	}
-	inline fq_t inv(fq_t a) {
-		return pow_table[fq_groupsize-log_table[a]]; }
-	inline fq_t div(fq_t a, fq_t b) {
-		if (a) {
-			register int t = log_table[a] - log_table[b];
-			if (t<0) t+=fq_groupsize;
-			return pow_table[t];
-		}
-		else return 0;
-	}
-	inline fq_t add(fq_t a, fq_t b) {
-		return a^b; }
-	inline void mulby(fq_t& a, fq_t b) {
-		a=mul(a, b);}
-	inline void invert(fq_t& a) {
-		a=inv(a); }
-	inline void divby(fq_t& a, fq_t b) {		
-		if (a) {
-			int t = log_table[a] - log_table[b];
-			if (t<0) t+=fq_groupsize;
-			a = pow_table[t];
-		}
-	}
-	inline void addto(fq_t& a, fq_t b) {
-		a^=b; }
-	inline void addto_mul(fq_t&d, fq_t a, fq_t b) {
-		if (a&&b) {
-			int t = log_table[a] + log_table[b];
-			if (t>fq_groupsize) t-=fq_groupsize;
-			d ^= pow_table[t];
-		}
-	}
+        inline fq_t mul(fq_t a, fq_t b) {
+                if (a&&b)
+                {
+                        register int t = log_table[a] + log_table[b];
+                        if (t>fq_groupsize) t-=fq_groupsize;
+                        return pow_table[t];
+                }
+                else
+                        return 0;
+        }
+        inline fq_t inv(fq_t a) {
+                return pow_table[fq_groupsize-log_table[a]]; }
+        inline fq_t div(fq_t a, fq_t b) {
+                if (a) {
+                        register int t = log_table[a] - log_table[b];
+                        if (t<0) t+=fq_groupsize;
+                        return pow_table[t];
+                }
+                else return 0;
+        }
+        inline fq_t add(fq_t a, fq_t b) {
+                return a^b; }
+        inline void mulby(fq_t& a, fq_t b) {
+                a=mul(a, b);}
+        inline void invert(fq_t& a) {
+                a=inv(a); }
+        inline void divby(fq_t& a, fq_t b) {
+                if (a) {
+                        int t = log_table[a] - log_table[b];
+                        if (t<0) t+=fq_groupsize;
+                        a = pow_table[t];
+                }
+        }
+        inline void addto(fq_t& a, fq_t b) {
+                a^=b; }
+        inline void addto_mul(fq_t&d, fq_t a, fq_t b) {
+                if (a&&b) {
+                        int t = log_table[a] + log_table[b];
+                        if (t>fq_groupsize) t-=fq_groupsize;
+                        d ^= pow_table[t];
+                }
+        }
+}
 }
 
 #endif //FQ_H
