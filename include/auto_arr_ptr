@@ -15,6 +15,15 @@
  * the License.
  */
 
+#ifndef AUTO_ARR_PTR
+#define AUTO_ARR_PTR
+
+namespace rnc
+{
+
+/**
+   \brief auto_ptr for arrays
+ */
 template<class T>
 class auto_arr_ptr
 {
@@ -34,3 +43,6 @@ public:
 		_ptr = ptr;
 	}
 };
+}
+
+#endif //AUTO_ARR_PTR

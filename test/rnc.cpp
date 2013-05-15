@@ -33,6 +33,7 @@
 #include <sys/time.h>
 
 using namespace std;
+using namespace rnc;
 using namespace rnc::fq;
 using namespace rnc::matrix;
 

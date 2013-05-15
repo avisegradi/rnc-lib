@@ -15,4 +15,9 @@
  * the License.
  */
 
+#ifndef RNC__
+#define RNC__
+
 #include <rnc-lib/matrix.h>
+
+#endif //RNC__

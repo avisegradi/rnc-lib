@@ -20,8 +20,10 @@
 #ifndef __MKSTR_
 #define __MKSTR_
 
+namespace rnc {
+
 /**
- * Stringbuilder
+ * \brief Stringbuilder
  *
  * Example:
  * const string &mystr= MKStr() << "apple" << setw(5)    \
@@ -47,5 +49,7 @@ public:
 
         operator std::string() const { return stream.str(); }
 };
+
+}
 
 #endif //__MKSTR_
