@@ -25,7 +25,7 @@
 #include <config.h>
 #include <stdint.h>
 
-/// Random Network Coding Library namespace
+/// Random Network Coding Library
 namespace rnc
 {
 
