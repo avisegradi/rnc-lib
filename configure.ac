@@ -64,7 +64,7 @@ DX_XML_FEATURE(OFF)
 DX_PDF_FEATURE(OFF)
 DX_PS_FEATURE(OFF)
 
-DX_INIT_DOXYGEN([$PACKAGE_NAME],[doc/doxygen.cfg], [doc/compiled])
+DX_INIT_DOXYGEN([$PACKAGE_NAME],[doxygen.cfg])
 
 ######################################################################
 
