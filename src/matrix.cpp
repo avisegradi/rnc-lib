@@ -32,7 +32,7 @@ namespace rnc
 namespace matrix
 {
 
-int BLK = 1;
+int BLOCK_SIZE = 1;
 int NCPUS = 2;
 
 static void checkGError(char const * const context, GError *error)
@@ -66,6 +66,7 @@ static void checkGError(char const * const context, GError *error)
 
 void p(const fq_t v)
 {
+        /// \todo setw(4) <- setw (ifdef(Q256) ? 2 : 4)
 	cout << hex << setfill('0') << setw(4) << (int)v;
 }
 
@@ -196,7 +197,7 @@ void mulrow_blk(gpointer bb, gpointer d)
 {
 	const muldata *data = reinterpret_cast<muldata*>(d);
 
-	const int b = BLK;
+	const int b = BLOCK_SIZE;
 	const int cols1 = data->cols1;
 	const int cols2 = data->cols2;
 	const int rows1 = data->rows1;
@@ -262,7 +263,7 @@ void pmul_blk(const fq_t *m1, const fq_t *m2, fq_t *md,
 					      NCPUS, true, &error);
 	checkGError("g_thread_pool_create", error);
 
-	for (long i=1; i<=rows1; i+=BLK) {
+	for (long i=1; i<=rows1; i+=BLOCK_SIZE) {
 		g_thread_pool_push(pool, (void*)i, &error);
 		checkGError("g_thread_pool_push", error);
 	}
@@ -297,7 +298,7 @@ void pmul(const fq_t *m1, const fq_t *m2, fq_t *md,
 	}
 	else
 	{
-		if (BLK == 1)
+		if (BLOCK_SIZE == 1)
 			pmul_nonblk(m1, m2, md, rows1, cols1, cols2);
 		else
 			pmul_blk(m1, m2, md, rows1, cols1, cols2);
@@ -325,12 +326,12 @@ void mul_blk(const fq_t *m1, const fq_t *m2, fq_t *md,
 
 	memset(md, 0, rows1*cols2*sizeof(fq_t));
 
-	for (i=0, li=BLK; i<rows1; li+=BLK, i+=BLK) {
+	for (i=0, li=BLOCK_SIZE; i<rows1; li+=BLOCK_SIZE, i+=BLOCK_SIZE) {
 		if (li > rows1) li=rows1;
-		for (k=0, lk=BLK; k<cols1; lk+=BLK, k+=BLK) {
+		for (k=0, lk=BLOCK_SIZE; k<cols1; lk+=BLOCK_SIZE, k+=BLOCK_SIZE) {
 			if (lk > cols1) lk=cols1;
 
-			for (j=0, lj=BLK; j<cols2; lj+=BLK, j+=BLK) {
+			for (j=0, lj=BLOCK_SIZE; j<cols2; lj+=BLOCK_SIZE, j+=BLOCK_SIZE) {
 				if (lj > cols2) lj=cols2;
 
 				for (i0=i; i0<li; ++i0) {
@@ -351,7 +352,7 @@ void mul_blk(const fq_t *m1, const fq_t *m2, fq_t *md,
 void mul(const fq_t *m1, const fq_t *m2, fq_t *md,
 	 const int rows1, const int cols1,int const cols2)
 {
-	if (BLK == 1)
+	if (BLOCK_SIZE == 1)
 		mul_nonblk(m1, m2, md, rows1, cols1, cols2);
 	else
 		mul_blk(m1, m2, md, rows1, cols1, cols2);
