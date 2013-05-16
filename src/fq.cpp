@@ -32,6 +32,10 @@ static fq_t ltab[fq_size];
 
 void init()
 {
+#pragma message "fq::init is OBSOLETE"
+/// \todo Obsolete this function. logtable should be calculated off-line;
+/// testing should be externalized.
+
 	for (int i=0; i<fq_size-1; i++)
 		ltab[pow_table[i]] = i;
 

@@ -70,14 +70,25 @@ namespace fq
         /// \brief Power table
         extern const fq_t pow_table[fq_size];
 
-        /** \brief Initialize power- and logtables.
+        /**
+           \brief Initialize power- and logtables.
+
+           \remark \e Must be called before performing any operations.
+           \
          */
         void init();
-
+-
         /// \addtogroup fqops Operations over the finite field
         /// @{
 
-        /** \brief Multiplication over \f$F_q\f$ */
+        /** \brief Multiplication over \f$\mathbb{F}_q\f$
+            \return \f$ a*b\f$
+
+            \test a == mul(1, a)
+            \test mul(a, b) = mul(b, a) | a,b != 0
+            \test mul(a, mul(b, c)) == mul(mul(a, b), c)
+            \test a == mul(a, mul(a, inv(a))) | a != 0
+         */
         inline fq_t mul(fq_t a, fq_t b) {
                 if (a&&b)
                 {
@@ -89,10 +100,20 @@ namespace fq
                 else
                         return 0;
         }
-        /** \brief Multiplicative inverse (\f$a^{-1}\f$) over \f$F_q\f$ */
+        /** \brief Multiplicative inverse over \f$\mathbb{F}_q\f$
+
+         \return \f$a^{-1}\f$
+         \test 1 == inv(1)
+         \test a == mul(a, mul(a, inv(a))) | a != 0
+        */
         inline fq_t inv(fq_t a) {
                 return pow_table[fq_groupsize-log_table[a]]; }
-        /** \brief Division over \f$F_q\f$ */
+
+        /** \brief Division over \f$\mathbb{F}_q\f$
+
+            \return \f$a/b\f$
+            \test a=mul(b, div(a, b)) | b != 0
+         */
         inline fq_t div(fq_t a, fq_t b) {
                 if (a) {
                         register int t = log_table[a] - log_table[b];
@@ -101,16 +122,36 @@ namespace fq
                 }
                 else return 0;
         }
-        /** \brief Addition over \f$F_q\f$ */
+
+        /** \brief Addition over \f$\mathbb{F}_q\f$
+
+            \return \f$a+b\f$
+
+            \remark Addition over \f$\mathbb{F}_q\f$, if \f$q = 2^u\f$, is a
+            simple XOR. No test is needed.
+         */
         inline fq_t add(fq_t a, fq_t b) {
                 return a^b; }
-        /** \brief In-place multiplication over \f$F_q\f$ */
+
+        /** \brief In-place multiplication over \f$\mathbb{F}_q\f$
+
+            \test t:=a; mulby(t, b); t == mul(a, b)
+        */
         inline void mulby(fq_t& a, fq_t b) {
                 a=mul(a, b);}
-        /** \brief In-place multiplicative inversion (\f$a^{-1}\f$) over \f$F_q\f$ */
+
+        /** \brief In-place multiplicative inversion (\f$a^{-1}\f$) over
+            \f$\mathbb{F}_q\f$
+
+            \test t:=a; invert(t); t == inv(a) | a != 0
+         */
         inline void invert(fq_t& a) {
                 a=inv(a); }
-        /** \brief In-place division over \f$F_q\f$ */
+
+        /** \brief In-place division over \f$\mathbb{F}_q\f$
+
+            \test t:=a; divby(t, b); t == div(a, b) | b != 0
+         */
         inline void divby(fq_t& a, fq_t b) {
                 if (a) {
                         int t = log_table[a] - log_table[b];
@@ -118,14 +159,19 @@ namespace fq
                         a = pow_table[t];
                 }
         }
-        /** \brief In-place addition over \f$F_q\f$ */
+        /** \brief In-place addition over \f$\mathbb{F}_q\f$
+
+            \test t:=a; addto(t, b); t == add(a, b)
+         */
         inline void addto(fq_t& a, fq_t b) {
                 a^=b; }
-        /** \brief Derived operation over \f$F_q\f$: \f$d:=d+(a*b)\f$.
+        /** \brief Derived operation over \f$\mathbb{F}_q\f$: \f$d:=d+(a*b)\f$.
 
             An operation used very often in matrix multiplication. The
             specialized implementation performs better than #addto(d,
             #mul (a,b)).
+
+            \test t:=d; addto_mul(t, a, b); t == add(d, mul(a, b))
          */
         inline void addto_mul(fq_t&d, fq_t a, fq_t b) {
                 if (a&&b) {
