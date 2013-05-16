@@ -74,18 +74,25 @@ namespace fq
          */
         void init();
 
+        /// \addtogroup fqops Operations over the finite field
+        /// @{
+
+        /** \brief Multiplication over \f$F_q\f$ */
         inline fq_t mul(fq_t a, fq_t b) {
                 if (a&&b)
                 {
                         register int t = log_table[a] + log_table[b];
+                        // === t%fq_groupsize; but this is faster.
                         if (t>fq_groupsize) t-=fq_groupsize;
                         return pow_table[t];
                 }
                 else
                         return 0;
         }
+        /** \brief Multiplicative inverse (\f$a^{-1}\f$) over \f$F_q\f$ */
         inline fq_t inv(fq_t a) {
                 return pow_table[fq_groupsize-log_table[a]]; }
+        /** \brief Division over \f$F_q\f$ */
         inline fq_t div(fq_t a, fq_t b) {
                 if (a) {
                         register int t = log_table[a] - log_table[b];
@@ -94,12 +101,16 @@ namespace fq
                 }
                 else return 0;
         }
+        /** \brief Addition over \f$F_q\f$ */
         inline fq_t add(fq_t a, fq_t b) {
                 return a^b; }
+        /** \brief In-place multiplication over \f$F_q\f$ */
         inline void mulby(fq_t& a, fq_t b) {
                 a=mul(a, b);}
+        /** \brief In-place multiplicative inversion (\f$a^{-1}\f$) over \f$F_q\f$ */
         inline void invert(fq_t& a) {
                 a=inv(a); }
+        /** \brief In-place division over \f$F_q\f$ */
         inline void divby(fq_t& a, fq_t b) {
                 if (a) {
                         int t = log_table[a] - log_table[b];
@@ -107,8 +118,15 @@ namespace fq
                         a = pow_table[t];
                 }
         }
+        /** \brief In-place addition over \f$F_q\f$ */
         inline void addto(fq_t& a, fq_t b) {
                 a^=b; }
+        /** \brief Derived operation over \f$F_q\f$: \f$d:=d+(a*b)\f$.
+
+            An operation used very often in matrix multiplication. The
+            specialized implementation performs better than #addto(d,
+            #mul (a,b)).
+         */
         inline void addto_mul(fq_t&d, fq_t a, fq_t b) {
                 if (a&&b) {
                         int t = log_table[a] + log_table[b];
@@ -116,6 +134,8 @@ namespace fq
                         d ^= pow_table[t];
                 }
         }
+
+        ///@}
 }
 }
 
