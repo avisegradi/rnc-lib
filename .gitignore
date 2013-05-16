@@ -47,3 +47,5 @@ test/.libs/
 test/Makefile
 test/Makefile.in
 test/rnc-test
+missing
+doc
