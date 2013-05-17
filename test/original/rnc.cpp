@@ -15,6 +15,13 @@
  * the License.
  */
 
+/** \file
+
+    \brief Original application, which has been turned into a library.
+
+    \remark This code is retained for later use and testing.
+ */
+
 #include <glib.h>
 #include <rnc>
 #include <iostream>

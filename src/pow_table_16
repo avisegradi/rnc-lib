@@ -14,6 +14,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+/** \file
+
+    \brief Power table for GF(65536).
+
+    This file is included in matrix.cpp if the 16 bit finite field is used.
+ */
 
 {
         0x01, 0x8017, 0xC01B, 0x6005, 0x701D, 0x5821, 0x1C47, 0xB6B8, 0x3607,

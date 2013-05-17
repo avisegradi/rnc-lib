@@ -15,6 +15,11 @@
  * the License.
  */
 
+/** \file
+
+    \brief Stringbuilder class
+*/
+
 #include <sstream>
 
 #ifndef __MKSTR_

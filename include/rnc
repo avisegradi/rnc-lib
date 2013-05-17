@@ -15,31 +15,12 @@
  * the License.
  */
 
-/**
-   \mainpage Random Linear Network Coding Library Documentation
+/** \file
 
-   \e rnc-lib (working title) is (will be) a library implementing random network
-   coding over the finite fields GF(256) and GF(65536). The operations are
-   implemented using discrete logarithm tables instead of generic finite field
-   operations, ensuring that these operations can be performed in constant time.
+    \brief Main include file
 
-   The main goals of this library are practicality and speed. It is implemented
-   in C/C++, and is highly optimized (inline functions, cache optimization for
-   matrix operations, multi-threading). The field size is a compile time
-   information; this reduces the number of indirections on memory access when
-   performing operations. By default, the 16 bit finite field is used, as it
-   performs almost twice as fast than the 8 bit version, and it greatly reduces
-   the probability of encountering a singular matrix. Bigger finite fields are
-   not feasible to be implemented with discrete logarithm tables. On an Intel
-   i5-2410M CPU, using the 16 bit finite field, this library can
-   encode/decode—in memory—a 128 MB file cut into 32 blocks in 4.55 seconds (28
-   MB/s).
-
-   This library is a work-in progress. It is currently being prepared to be
-   shared on GitHub, and will be available in a week or so.
-
-   The Random Network Coding Library is planned to be released under the
-   Apache&nbsp;2.0 license (http://www.apache.org/licenses/LICENSE-2.0).
+    Including this header will include all features provided by the Random
+    Network Coding Library.
  */
 
 #ifndef RNC__

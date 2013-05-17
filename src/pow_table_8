@@ -15,6 +15,13 @@
  * the License.
  */
 
+/** \file
+
+    \brief Power table for GF(256).
+
+    This file is included in matrix.cpp if the 8 bit finite field is used.
+ */
+
 {
 
         0x01, 0xFF, 0x13, 0x73, 0x1E, 0xE4, 0xD9, 0xF5, 0x4F, 0xCD, 0x4D, 0x28,

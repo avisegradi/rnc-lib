@@ -15,6 +15,11 @@
  * the License.
  */
 
+/** \file
+
+    \brief Implementation of the finite field operations specified in rnc-lib/fq.h
+ */
+
 #include <rnc-lib/fq.h>
 #include <mkstr>
 #include <iostream>
