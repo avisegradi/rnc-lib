@@ -68,5 +68,5 @@ DX_INIT_DOXYGEN([$PACKAGE_NAME],[doxygen.cfg])
 
 ######################################################################
 
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile rnc-1.0.pc])
+AC_CONFIG_FILES([Makefile src/Makefile test/Makefile test/original/Makefile rnc-1.0.pc])
 AC_OUTPUT

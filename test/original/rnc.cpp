@@ -186,7 +186,7 @@ try
 	const string fname = argv[1];
 	const int N = getint(argv[2]);
 	NCPUS = getint(argv[3]);
-	BLK = getint(argv[4]);
+	BLOCK_SIZE = getint(argv[4]);
 	const string mode = argv[5];
 	const string id = argv[6];
 	const string &fout = fname + "_out_" + id;
@@ -199,7 +199,7 @@ try
 	if (mode == "c")
 	{
 		printf("MEM file=%s mode=c q=%d N=%d CPUs=%d BS=%d ",
-		       fname.c_str(), fq_size, N, NCPUS, BLK);
+		       fname.c_str(), fq_size, N, NCPUS, BLOCK_SIZE);
 
 		off_t fsize;
 		auto_arr_ptr<fq_t> m1 = new fq_t [N*N];
@@ -254,7 +254,7 @@ try
 	if (mode == "d")
 	{
 		printf("MEM file=%s mode=d q=%d N=%d CPUs=%d BS=%d ",
-		       fname.c_str(), fq_size, N, NCPUS, BLK);
+		       fname.c_str(), fq_size, N, NCPUS, BLOCK_SIZE);
 
 		off_t fsize;
 		auto_arr_ptr<fq_t> m1 = new fq_t [N*N];
