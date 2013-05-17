@@ -26,8 +26,10 @@ namespace rnc {
  * \brief Stringbuilder
  *
  * Example:
+ * \code
  * const string &mystr= MKStr() << "apple" << setw(5)    \
  *                              << setfill('0') << 42 << endl;
+ * \endcode
  * Produces: apple00042
  */
 class MKStr

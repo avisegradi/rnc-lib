@@ -104,6 +104,11 @@ namespace matrix
 
             \remark \c md must point to an address capable of storing \c rows1 x
             \c cols2 elements.
+
+            \todo Use another matrix representation: store each row separately,
+            each row is pointed to by pointer, the vector/array of these pointer
+            is passed as input (instead of storing the whole matrix in a single
+            line).
          */
         void mul(const fq_t *m1, const fq_t *m2, fq_t *md,
                  const int rows1, const int cols1,int const cols2);
