@@ -18,8 +18,6 @@
 /**
    \file
    \brief Test finite field operations.
-
-   Compile and run without parameters.
 */
 
 int main(int argc, char **argv)
