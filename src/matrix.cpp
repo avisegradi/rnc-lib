@@ -165,8 +165,6 @@ bool invert(const fq_t *m_in, fq_t *res, const int rows, const int cols) throw (
 		}
 	}
 
-//	p(m, res);
-
 	//back-substitution
 	for (int i=rows-1; i>=0; --i)
 	{
@@ -184,8 +182,6 @@ bool invert(const fq_t *m_in, fq_t *res, const int rows, const int cols) throw (
 	}
 
 	return true;
-
-//	p(m, res);
 }
 
 typedef struct muldata

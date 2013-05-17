@@ -11,4 +11,4 @@ pkgconfig_DATA = rnc-1.0.pc
 include $(top_srcdir)/doxygen.am
 
 # ensure the distribution of the doxygen configuration file
-EXTRA_DIST = doc/doxygen.cfg
+EXTRA_DIST = doxygen.cfg
