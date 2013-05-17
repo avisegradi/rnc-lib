@@ -1,6 +1,10 @@
 # Temp files
 *~
 
+# Compile directories
+.libs
+.deps
+
 # Compiled Object files
 *.slo
 *.lo
@@ -14,6 +18,9 @@
 *.lai
 *.la
 *.a
+
+# Compiled executables
+test/original/rnc-test
 
 # Autotools generated files
 Makefile
