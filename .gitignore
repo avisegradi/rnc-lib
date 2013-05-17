@@ -22,6 +22,7 @@
 # Compiled executables
 test/original/rnc-test
 test/test-fq/rnc-test-fq
+test/test-matr/rnc-test-matr
 
 # Autotools generated files
 Makefile

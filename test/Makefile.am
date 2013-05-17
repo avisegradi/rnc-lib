@@ -1,1 +1,1 @@
-SUBDIRS=original test-fq
+SUBDIRS=original test-fq test-matr
