@@ -44,11 +44,23 @@ AC_TYPE_UINT16_T
 AC_FUNC_MMAP
 AC_CHECK_FUNCS([memset munmap strerror])
 
+# Select finite field
 AC_ARG_WITH([q256], AS_HELP_STRING([--with-q256], [Use 8 bit finite field. Default: 16 bit finite field]), [], [with_q256=no])
 if test "$with_q256" != no; then
+        AC_MSG_NOTICE([Using 8 bit finite field GF(256)])
 	AC_DEFINE([Q256], [1], [Use 8 bit finite field.])
 else
+        AC_MSG_NOTICE([Using 16 bit finite field GF(65536)])
 	AC_DEFINE([Q256], [0], [Use 8 bit finite field.])
+fi
+
+# Compile tests
+AC_ARG_WITH([tests], AS_HELP_STRING([--without-tests], [Don't compile tests. By default, tests are compiled.]), [], [with_tests=yes])
+AM_CONDITIONAL([WITH_TESTS], [test "x$with_tests" != xno])
+if test "x$with_tests" != xno; then
+        AC_MSG_NOTICE([Will compile tests])
+else
+        AC_MSG_NOTICE([Will NOT compile tests])
 fi
 
 ######################################################################
@@ -68,5 +80,11 @@ DX_INIT_DOXYGEN([$PACKAGE_NAME],[doxygen.cfg])
 
 ######################################################################
 
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile test/original/Makefile rnc-1.0.pc])
+AC_CONFIG_FILES([
+                Makefile
+                src/Makefile
+                test/Makefile
+                test/original/Makefile
+                test/test-fq/Makefile
+                rnc-1.0.pc])
 AC_OUTPUT

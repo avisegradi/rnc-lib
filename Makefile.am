@@ -1,5 +1,8 @@
 ACLOCAL_AMFLAGS=-I m4
-SUBDIRS=src test
+SUBDIRS=src
+if WITH_TESTS
+SUBDIRS+=test
+endif
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = rnc-1.0.pc

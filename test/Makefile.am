@@ -1,1 +1,1 @@
-SUBDIRS=original
+SUBDIRS=original test-fq
