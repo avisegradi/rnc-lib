@@ -77,7 +77,7 @@ namespace fq
            \
          */
         void init();
--
+
         /// \addtogroup fqops Operations over the finite field
         /// @{
 
