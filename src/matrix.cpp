@@ -15,6 +15,11 @@
  * the License.
  */
 
+/** \file
+
+    \brief Implementation of the matrix operations specified in rnc-lib/matrix.h
+ */
+
 #include <rnc-lib/matrix.h>
 #include <iostream>
 #include <iomanip>

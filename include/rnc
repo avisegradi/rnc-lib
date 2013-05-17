@@ -15,6 +15,14 @@
  * the License.
  */
 
+/** \file
+
+    \brief Main include file
+
+    Including this header will include all features provided by the Random
+    Network Coding Library.
+ */
+
 #ifndef RNC__
 #define RNC__
 

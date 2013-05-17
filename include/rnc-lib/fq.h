@@ -15,7 +15,8 @@
  * the License.
  */
 
-/** \file fq.h
+/** \file
+
     \brief Finite field and operations
  */
 

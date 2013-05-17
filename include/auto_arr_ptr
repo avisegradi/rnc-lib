@@ -15,6 +15,10 @@
  * the License.
  */
 
+/** \file
+    \brief Template class: auto_ptr for arrays
+ */
+
 #ifndef AUTO_ARR_PTR
 #define AUTO_ARR_PTR
 
