@@ -21,15 +21,13 @@
  */
 
 #include <rnc-lib/matrix.h>
-#include <iostream>
-#include <iomanip>
 #include <string.h>
 #include <stdlib.h>
 #include <glib.h>
 #include <mkstr>
 #include <auto_arr_ptr>
+#include <string>
 
-using namespace std;
 using namespace rnc::fq;
 
 namespace rnc
@@ -44,79 +42,12 @@ static void checkGError(char const * const context, GError *error)
 {
 	if (error != 0)
 	{
-		string ex = MKStr() << "glib error: "
+                std::string ex = MKStr() << "glib error: "
 				    << context << ": " << error->message;
 		g_error_free(error);
 		throw ex;
 	}
 }
-
-// Row address
-#define RA(m,r)   ((m)+(r)*cols)
-// Row element
-#define RE(ra, c) (*(ra + (c)))
-// Address
-#define A(m,r,c) (RA(m,r)+(c))
-// Element
-#define E(m,r,c) (*A(m,r,c))
-
-// Row address
-#define RA_(m,r, cols)   ((m)+(r)*cols)
-// Row element
-#define RE_(ra, c, cols) RE(ra, c)
-// Address
-#define A_(m,r,c,cols) (RA_(m,r,cols)+(c))
-// Element
-#define E_(m,r,c,cols) (*A_(m,r,c,cols))
-
-void p(const fq_t v)
-{
-        /// \todo setw(4) <- setw (ifdef(Q256) ? 2 : 4)
-	cout << hex << setfill('0') << setw(4) << (int)v;
-}
-
-void p(const fq_t *m, const int rows, const int cols)
-{
-	for (int i=0; i<rows; ++i)
-	{
-		bool fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else cout << ' ';
-
-			p(E(m,i,j));
-		}
-
-		cout << endl;
-	}
-}
-void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols)
-{
-	for (int i=0; i<rows; ++i)
-	{
-		bool fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else cout << ' ';
-
-			p(E(m1,i,j));
-		}
-		cout << " | ";
-		fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else cout << ' ';
-
-			p(E(m2,i,j));
-		}
-
-		cout << endl;
-	}
-}
-
 
 void set_identity(fq_t *m, const int rows, const int cols) throw()
 {

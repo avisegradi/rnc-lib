@@ -55,19 +55,32 @@ namespace matrix
         /// \addtogroup matr Matrix functions
         /// @{
 
-        /// \addtogroup matr_output Output functions
+        /// \addtogroup matr_e Element access
+        /// \warning These will change after the matrix representation has
+        /// changed \sa mul
         /// @{
 
-        /// Print a finite field element
-        void p(const fq_t v);
-        /// Print a matrix of size \c rows x \c cols
-        void p(const fq_t *m, const int rows, const int cols);
-        /// Print two matrices of the same size side-by-side
-        void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols);
+/// \brief  Row address (assuming the number of columns is \c cols)
+#define RA(m,r)   ((m)+(r)*cols)
+/// \brief  Row element
+#define RE(ra, c) (*(ra + (c)))
+/// \brief  Address
+#define A(m,r,c) (RA(m,r)+(c))
+/// \brief  Element
+#define E(m,r,c) (*A(m,r,c))
+
+/// \brief  Row address
+#define RA_(m,r, cols)   ((m)+(r)*cols)
+/// \brief  Row element
+#define RE_(ra, c, cols) RE(ra, c)
+/// \brief  Address
+#define A_(m,r,c,cols) (RA_(m,r,cols)+(c))
+/// \brief  Element
+#define E_(m,r,c,cols) (*A_(m,r,c,cols))
 
         /// @}
 
-        /// \addtogroup matr_ops Matrix operations
+        /// \addtogroup matr_ops Operations
         /// @{
 
         /** \brief Initialize a matrix to identity. */

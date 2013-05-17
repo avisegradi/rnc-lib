@@ -85,6 +85,7 @@ AC_CONFIG_FILES([
                 src/Makefile
                 test/Makefile
                 test/original/Makefile
+                test/common/Makefile
                 test/test-fq/Makefile
                 test/test-matr/Makefile
                 rnc-1.0.pc])

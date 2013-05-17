@@ -20,7 +20,16 @@
    \brief Test finite field operations.
 */
 
+#include <test.h>
+#include <rnc>
+#include <iostream>
+
+using namespace std;
+using namespace rnc::test;
+
 int main(int argc, char **argv)
 {
+        p(read(cin));
         return 0;
 }
+
