@@ -1,4 +1,4 @@
 bin_PROGRAMS=rnc-test
 rnc_test_SOURCES=rnc.cpp
-rnc_test_CPPFLAGS=$(GLIB_CFLAGS) -I$(top_srcdir)/include
-rnc_test_LDFLAGS=$(GTHREAD_LIBS) -L$(top_builddir)/src/.libs -lrnc-1.0 -L$(top_builddir)/test/common/.libs -lrnc-1.0 -ltest
+rnc_test_CPPFLAGS=$(TEST_CPP_FLAGS)
+rnc_test_LDFLAGS=$(TEST_LD_FLAGS)

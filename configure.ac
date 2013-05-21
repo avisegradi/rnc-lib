@@ -55,10 +55,27 @@ else
 fi
 
 # Compile tests
-AC_ARG_WITH([tests], AS_HELP_STRING([--without-tests], [Don't compile tests. By default, tests are compiled.]), [], [with_tests=yes])
+AC_ARG_WITH([tests], AS_HELP_STRING([--with-tests=ARG], [Specify whether to compile tests, and that which rnc-lib libraries to build against: compiled or installed. By default, tests are built against freshly compiled libraries (--with-tests=compiled). If --with-tests=installed is specified, tests will be compiled against libraries specified by pkg-config. @<:@ARG={no,compiled,installed}@:>@ @<:@default=compiled@:>@]), [], [with_tests=compiled])
+
+if test "x$with_tests" == xyes; then
+        with_tests=compiled
+fi
+
 AM_CONDITIONAL([WITH_TESTS], [test "x$with_tests" != xno])
+AM_CONDITIONAL([WITH_LOCAL_TESTS], [test "x$with_tests" == xcompiled])
+
 if test "x$with_tests" != xno; then
-        AC_MSG_NOTICE([Will compile tests])
+        if test "x$with_tests" == xcompiled; then
+                AC_MSG_NOTICE([Will compile tests against COMPILED libraries])
+                AC_SUBST([TEST_ADD_CPP_FLAGS], ['$(GLIB_CFLAGS) -I$(abs_top_srcdir)/include'])
+                AC_SUBST([TEST_ADD_LD_FLAGS], ['$(GTHREAD_LIBS) -L$(abs_top_builddir)/src/.libs -lrnc-1.0'])
+        elif test "x$with_tests" == xinstalled; then
+                AC_MSG_NOTICE([Will compile tests agains INSTALLED libraries])
+                AC_SUBST([TEST_ADD_CPP_FLAGS], [$(pkg-config --cflags rnc-1.0)])
+                AC_SUBST([TEST_ADD_LD_FLAGS], [$(pkg-config --libs rnc-1.0)])
+        else
+                AC_MSG_ERROR([Unknown value for --with-tests])
+        fi
 else
         AC_MSG_NOTICE([Will NOT compile tests])
 fi
