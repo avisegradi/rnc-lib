@@ -1,5 +1,8 @@
 library_includedir=$(includedir)/rnc-1.0
-library_include_HEADERS = ../include/rnc ../include/rnc-lib/matrix.h ../include/rnc-lib/fq.h
+library_include_HEADERS = ../include/rnc
+library_subdir_includedir=$(includedir)/rnc-1.0/rnc-lib
+library_subdir_include_HEADERS = ../include/rnc-lib/matrix.h ../include/rnc-lib/fq.h
+
 
 lib_LTLIBRARIES = librnc-1.0.la
 librnc_1_0_la_SOURCES = matrix.cpp $(top_srcdir)/include/rnc-lib/matrix.h \
