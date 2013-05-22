@@ -96,16 +96,22 @@ int main()
          */
         class TestCase
         {
-                const std::string _name; //< \brief Name of the test case
+                /// \brief Name of the test case
+                const std::string _name;
+                /// \brief Number of times to repeat when #execute is called
+                const size_t _repeat;
+
         public:
                 static std::string field_separator;
 
-                /** \brief Constructor.
+                /** \brief Constructor
 
-                    \param __name Name of the test case. This will be printed
-                                  out by #execute.
+                    \param __name   Name of the test case. This will be printed
+                                    out by #execute
+                    \param __repeat Number of times to repeat when #execute is
+                                    called
                  */
-                TestCase(const std::string &__name);
+                TestCase(const std::string &__name, size_t __repeat = 1);
 
                 /** \brief Perform the test.
 
@@ -120,14 +126,15 @@ int main()
 
                 /** \brief The name of the test case */
                 const std::string& name() const { return _name; }
+                /** \brief Number of times to repeat when #execute is calledtes */
+                const size_t repeat() const { return _repeat; }
 
                 /** \brief Generate output based on the result of #performTest
 
-                    Calls #performTest and generates output based on its result.
+                    Calls #performTest #repeat times and generates output based
+                    on its result.
 
                     \param buffer Output buffer
-                    \param n Number of times to repeat the test. Useful when
-                             #performTest is not deterministic.
 
                     Example
                     \code
@@ -136,7 +143,7 @@ test_2_1	1/2	PASS
 test_2_1	2/2	FAIL	Details provided by performTest
                     \endcode
                  */
-                void execute(std::ostream& buffer, size_t n = 1) const;
+                void execute(std::ostream& buffer) const;
         };
 }
 }

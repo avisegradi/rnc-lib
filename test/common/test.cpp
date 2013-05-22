@@ -88,15 +88,16 @@ void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols, ostream& 
 
 string TestCase::field_separator = "\t";
 
-TestCase::TestCase(const string &__name)
-        : _name(__name)
+        TestCase::TestCase(const string &__name, size_t __repeat)
+        : _name(__name), _repeat(__repeat)
 {}
 
-void TestCase::execute(std::ostream& buffer, size_t n) const
+void TestCase::execute(std::ostream& buffer) const
 {
-        for (int i=1; i<=n; i++)
+        for (int i=1; i<=repeat(); i++)
         {
-                buffer << name() << field_separator << i << '/' << n << field_separator;
+                buffer << name() << field_separator
+                       << i << '/' << repeat() << field_separator;
                 ostringstream buf;
                 if (performTest(&buf))
                         buffer << "PASS";
