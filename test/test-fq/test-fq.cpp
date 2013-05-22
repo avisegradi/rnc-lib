@@ -23,13 +23,66 @@
 #include <test.h>
 #include <rnc>
 #include <iostream>
+#include <list>
+#include <stdlib.h>
 
 using namespace std;
 using namespace rnc::test;
+using namespace rnc::fq;
+
+fq_t getrand() { return rand() % fq_size; }
+
+template <bool (*pt)(ostream*buffer)>
+class FQ_TestCase : public TestCase
+{
+public:
+        FQ_TestCase(const string &tname, size_t n)
+                : TestCase(string("fq::") + tname, n) {}
+        bool performTest(ostream *buffer) const
+        {
+                return pt(buffer);
+        }
+};
+
+#define new_TC(a, n) new FQ_TestCase<a>(#a, n)
+
+bool inv_1(ostream *buffer)
+{
+        if (buffer)
+                (*buffer) << "log_table[1] = " << log_table[1];
+        return inv(1) == 1;
+}
+bool inv_2(ostream *buffer)
+{
+        fq_t a;
+        do { a = getrand(); } while (a==0);
+        if (buffer)
+        {
+                (*buffer) << "a=";
+                p(a, *buffer);
+        }
+        return 1 == mul(a, inv(a));
+}
 
 int main(int argc, char **argv)
 {
-        p(read(cin));
+        srand(time(NULL));
+
+        init();
+
+        cout << fq_size << endl;
+
+        typedef list<TestCase*> case_list;
+        case_list cases;
+        cases.push_back(new_TC(inv_1, 1));
+        cases.push_back(new_TC(inv_2, 5));
+
+        for (case_list::const_iterator i = cases.begin();
+             i!=cases.end(); i++)
+        {
+                (*i)->execute(cout);
+        }
+
         return 0;
 }
 
