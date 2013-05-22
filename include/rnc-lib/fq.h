@@ -75,7 +75,6 @@ namespace fq
            \brief Initialize power- and logtables.
 
            \remark \e Must be called before performing any operations.
-           \
          */
         void init();
 
@@ -108,7 +107,9 @@ namespace fq
          \test 2) a == mul(a, mul(a, inv(a))) | a != 0
         */
         inline fq_t inv(fq_t a) {
-                return pow_table[fq_groupsize-log_table[a]]; }
+                register int t = fq_groupsize-log_table[a];
+                if (t>=fq_groupsize) t-=fq_groupsize;
+                return pow_table[t]; }
 
         /** \brief Division over \f$\mathbb{F}_q\f$
 
