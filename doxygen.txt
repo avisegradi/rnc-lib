@@ -61,9 +61,8 @@
    encode/decode—in memory—a 128 MB file cut into 32 blocks in 4.55 seconds (28
    MB/s).
 
-   This library is a work-in progress. It is currently being prepared to be
-   shared on GitHub, and will be available in a week or so.
+   The project can be found on GitHub: https://github.com/avisegradi/rnc-lib
 
-   The Random Network Coding Library is planned to be released under the
-   Apache&nbsp;2.0 license (http://www.apache.org/licenses/LICENSE-2.0).
+   The Random Network Coding Library is released under the Apache&nbsp;2.0
+   license: http://www.apache.org/licenses/LICENSE-2.0
  */
