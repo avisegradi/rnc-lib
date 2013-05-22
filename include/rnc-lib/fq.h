@@ -85,10 +85,10 @@ namespace fq
         /** \brief Multiplication over \f$\mathbb{F}_q\f$
             \return \f$ a*b\f$
 
-            \test a == mul(1, a)
-            \test mul(a, b) = mul(b, a) | a,b != 0
-            \test mul(a, mul(b, c)) == mul(mul(a, b), c)
-            \test a == mul(a, mul(a, inv(a))) | a != 0
+            \test 1) a == mul(1, a)
+            \test 2) mul(a, b) = mul(b, a) | a,b != 0
+            \test 3) mul(a, mul(b, c)) == mul(mul(a, b), c)
+            \test 4) a == mul(a, mul(a, inv(a))) | a != 0
          */
         inline fq_t mul(fq_t a, fq_t b) {
                 if (a&&b)
@@ -104,8 +104,8 @@ namespace fq
         /** \brief Multiplicative inverse over \f$\mathbb{F}_q\f$
 
          \return \f$a^{-1}\f$
-         \test 1 == inv(1)
-         \test a == mul(a, mul(a, inv(a))) | a != 0
+         \test 1) 1 == inv(1)
+         \test 2) a == mul(a, mul(a, inv(a))) | a != 0
         */
         inline fq_t inv(fq_t a) {
                 return pow_table[fq_groupsize-log_table[a]]; }
