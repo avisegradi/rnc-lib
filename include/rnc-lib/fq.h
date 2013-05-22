@@ -105,7 +105,7 @@ namespace fq
 
          \return \f$a^{-1}\f$
          \test 1) 1 == inv(1)
-         \test 2) a == mul(a, mul(a, inv(a))) | a != 0
+         \test 2) 1 == mul(a, inv(a)) | a != 0
         */
         inline fq_t inv(fq_t a) {
                 return pow_table[fq_groupsize-log_table[a]]; }
