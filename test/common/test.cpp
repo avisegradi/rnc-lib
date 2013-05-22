@@ -24,7 +24,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include <mkstr>
+#include <sstream>
 
 using namespace std;
 
@@ -97,12 +97,12 @@ void TestCase::execute(std::ostream& buffer, size_t n) const
         for (int i=1; i<=n; i++)
         {
                 buffer << name() << field_separator << i << '/' << n << field_separator;
-                MKStr buf;
+                ostringstream buf;
                 if (performTest(&buf))
                         buffer << "PASS";
                 else
                         buffer << "FAIL";
-                buffer << (string)buf << endl;
+                buffer << buf.str() << endl;
         }
 }
 
