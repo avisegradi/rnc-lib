@@ -38,13 +38,13 @@ fq::fq_t read(std::istream &is)
         return 0;
 }
 
-void p(const fq_t v)
+void p(const fq_t v, ostream& buffer)
 {
         /// \todo setw(4) <- setw (ifdef(Q256) ? 2 : 4)
-	cout << hex << setfill('0') << setw(4) << (int)v;
+	buffer << hex << setfill('0') << setw(4) << (int)v;
 }
 
-void p(const fq_t *m, const int rows, const int cols)
+void p(const fq_t *m, const int rows, const int cols, ostream& buffer)
 {
 	for (int i=0; i<rows; ++i)
 	{
@@ -52,15 +52,15 @@ void p(const fq_t *m, const int rows, const int cols)
 		for (int j=0; j<cols; ++j)
 		{
 			if (fcol) fcol=false;
-			else cout << ' ';
+			else buffer << ' ';
 
-			p(E(m,i,j));
+			p(E(m,i,j), buffer);
 		}
 
-		cout << endl;
+		buffer << endl;
 	}
 }
-void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols)
+void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols, ostream& buffer)
 {
 	for (int i=0; i<rows; ++i)
 	{
@@ -68,21 +68,21 @@ void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols)
 		for (int j=0; j<cols; ++j)
 		{
 			if (fcol) fcol=false;
-			else cout << ' ';
+			else buffer << ' ';
 
-			p(E(m1,i,j));
+			p(E(m1,i,j), buffer);
 		}
-		cout << " | ";
+		buffer << " | ";
 		fcol = true;
 		for (int j=0; j<cols; ++j)
 		{
 			if (fcol) fcol=false;
-			else cout << ' ';
+			else buffer << ' ';
 
-			p(E(m2,i,j));
+			p(E(m2,i,j), buffer);
 		}
 
-		cout << endl;
+		buffer << endl;
 	}
 }
 

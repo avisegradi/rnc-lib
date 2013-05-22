@@ -39,11 +39,13 @@ namespace test
         /// @{
 
         /// \brief Print a finite field element
-        void p(const fq_t v);
+        void p(const fq_t v, std::ostream& buffer = std::cout);
         /// \brief Print a matrix of size \c rows x \c cols
-        void p(const fq_t *m, const int rows, const int cols);
+        void p(const fq_t *m, const int rows, const int cols,
+               std::ostream& buffer = std::cout);
         /// \brief Print two matrices of the same size side-by-side
-        void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols);
+        void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols,
+               std::ostream& buffer = std::cout);
 
         /// @}
 
