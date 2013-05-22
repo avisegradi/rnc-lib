@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <mkstr>
 
 using namespace std;
 
@@ -83,6 +84,26 @@ void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols)
 
 		cout << endl;
 	}
+}
+
+string TestCase::field_separator = "\t";
+
+TestCase::TestCase(const string &__name)
+        : _name(__name)
+{}
+
+void TestCase::execute(std::ostream& buffer, size_t n) const
+{
+        for (int i=1; i<=n; i++)
+        {
+                buffer << name() << field_separator << i << '/' << n << field_separator;
+                MKStr buf;
+                if (performTest(&buf))
+                        buffer << "PASS";
+                else
+                        buffer << "FAIL";
+                buffer << (string)buf << endl;
+        }
 }
 
 }

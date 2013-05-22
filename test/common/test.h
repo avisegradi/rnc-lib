@@ -24,7 +24,8 @@
 #define TEST_H
 
 #include <rnc>
-#include <istream>
+#include <iostream>
+#include <string>
 
 namespace rnc
 {
@@ -54,6 +55,86 @@ namespace test
 
         /// @}
         /// @}
+
+        /** \brief Represents a single test case
+
+            Abstract class; template function pattern.
+
+            Example:
+            \code
+class MyTestCase : public TestCase
+{
+        int _shouldBe;
+public:
+        MyTestCase(const std::string &__name, int __shouldBe)
+                : TestCase(__name), _shouldBe(__shouldBe)
+        {}
+
+        bool performTest(MKStr *buffer)
+        {
+                if (1 == __shouldBe)
+                {
+                        if (buffer)
+                                 (*buffer) << "1 should be " << __shouldBe;
+                        return false;
+                }
+                else
+                {
+                        return true;
+                }
+        }
+};
+
+int main()
+{
+        MyTestCase tc("my_test_case(5)", 5);
+        tc.execute(cout);
+}
+            \endcode
+         */
+        class TestCase
+        {
+                const std::string _name; //< \brief Name of the test case
+        public:
+                static std::string field_separator;
+
+                /** \brief Constructor.
+
+                    \param __name Name of the test case. This will be printed
+                                  out by #execute.
+                 */
+                TestCase(const std::string &__name);
+
+                /** \brief Perform the test.
+
+                    \retval TRUE on success. Additional detail may be ouput in
+                            buffer.
+
+                    \param buffer [optional] Output buffer. If NULL, no output
+                                  must be generated.
+                 */
+                virtual bool performTest(std::ostream *buffer = 0) const = 0;
+
+                /** \brief The name of the test case */
+                const std::string& name() const { return _name; }
+
+                /** \brief Generate output based on the result of #performTest
+
+                    Calls #performTest and generates output based on its result.
+
+                    \param buffer Output buffer
+                    \param n Number of times to repeat the test. Useful when
+                             #performTest is not deterministic.
+
+                    Example
+                    \code
+test_1_1	1/1	PASS
+test_2_1	1/2	PASS
+test_2_1	2/2	FAIL	Details provided by performTest
+                    \endcode
+                 */
+                void execute(std::ostream& buffer, size_t n = 1) const;
+        };
 }
 }
 
