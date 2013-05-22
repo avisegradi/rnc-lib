@@ -102,7 +102,7 @@ void TestCase::execute(std::ostream& buffer, size_t n) const
                         buffer << "PASS";
                 else
                         buffer << "FAIL";
-                buffer << buf.str() << endl;
+                buffer << field_separator << buf.str() << endl;
         }
 }
 
