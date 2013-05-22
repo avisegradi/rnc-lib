@@ -1,3 +1,10 @@
+# Temp files
+*~
+
+# Compile directories
+.libs
+.deps
+
 # Compiled Object files
 *.slo
 *.lo
@@ -11,3 +18,47 @@
 *.lai
 *.la
 *.a
+
+# Compiled executables
+test/original/rnc-test
+test/test-fq/rnc-test-fq
+test/test-matr/rnc-test-matr
+
+# Dist tarball
+rnc-1.0.tar.gz
+
+# Autotools generated files
+config.cache
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+config.guess
+config.h
+config.h.in
+config.log
+config.status
+config.sub
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+m4/libtool.m4
+m4/ltoptions.m4
+m4/ltsugar.m4
+m4/ltversion.m4
+m4/lt~obsolete.m4
+rnc-1.0.pc
+src/.deps/
+src/.libs/
+src/Makefile
+src/Makefile.in
+stamp-h1
+test/.deps/
+test/.libs/
+test/Makefile
+test/Makefile.in
+test/rnc-test
+missing
+doc
