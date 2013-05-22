@@ -107,8 +107,9 @@ int main()
 
                 /** \brief Perform the test.
 
-                    \retval TRUE on success. Additional detail may be ouput in
-                            buffer.
+                    \retval true  The test has passed.
+                    \retval false The test has failed. Additional detail may be ouput in
+                                  buffer.
 
                     \param buffer [optional] Output buffer. If NULL, no output
                                   must be generated.
