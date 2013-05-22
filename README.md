@@ -27,8 +27,8 @@ License
 
         http://www.apache.org/licenses/LICENSE-2.0
 
-Installation
-------------
+Configuring
+-----------
 
 General installation instructions can be found in the INSTALL file provided in
 this package.
@@ -60,3 +60,13 @@ compiled  => Unit tests will be built against the rnc-lib libraries found in the
 installed => Unit tests will be built against installed libraries. I.e.: the
              output of `pkg-config --XXX rnc-1.0` will be used. This will be
              used to test installation in the early phases of development.
+
+Documentation
+-------------
+
+The documentation is provided in doxygen format. After ./configuring the
+package, execute
+
+                make doxygen-doc
+to create
+                doc/html/index.html
