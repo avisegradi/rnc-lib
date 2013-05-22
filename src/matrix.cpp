@@ -115,13 +115,24 @@ bool invert(const fq_t *m_in, fq_t *res, const int rows, const int cols) throw (
 	return true;
 }
 
+/** \brief Description of a single workunit
+
+    Matrix multiplication threads process workunits described with this
+    construct.
+ */
 typedef struct muldata
 {
+        /// \brief Left-hand side matrix
 	const fq_t *m1;
+        /// \brief Right-hand side matrix
 	const fq_t *m2;
+        /// \brief Result address
 	fq_t *md;
+        /// \brief Rows count of #m1
 	const int rows1;
+        /// \brief Columns of #m1 (== rows of #m2)
 	const int cols1;
+        /// \brief Columns of #m2
 	const int cols2;
 } muldata;
 
