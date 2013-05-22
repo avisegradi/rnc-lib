@@ -24,7 +24,11 @@ test/original/rnc-test
 test/test-fq/rnc-test-fq
 test/test-matr/rnc-test-matr
 
+# Dist tarball
+rnc-1.0.tar.gz
+
 # Autotools generated files
+config.cache
 Makefile
 Makefile.in
 aclocal.m4
