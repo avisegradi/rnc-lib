@@ -80,12 +80,13 @@ void init()
 }
 
 const fq_t pow_table[fq_size] =
-#ifdef Q256
+#if Q256 != 0
 #include "pow_table_8"
 #else
 #include "pow_table_16"
 #endif //Q256
 ;
+
 const fq_t * const log_table = ltab;
 
 }

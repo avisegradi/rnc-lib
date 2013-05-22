@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 using namespace std;
 
@@ -37,13 +38,13 @@ fq::fq_t read(std::istream &is)
         return 0;
 }
 
-void p(const fq_t v)
+void p(const fq_t v, ostream& buffer)
 {
         /// \todo setw(4) <- setw (ifdef(Q256) ? 2 : 4)
-	cout << hex << setfill('0') << setw(4) << (int)v;
+	buffer << hex << setfill('0') << setw(4) << (int)v;
 }
 
-void p(const fq_t *m, const int rows, const int cols)
+void p(const fq_t *m, const int rows, const int cols, ostream& buffer)
 {
 	for (int i=0; i<rows; ++i)
 	{
@@ -51,15 +52,15 @@ void p(const fq_t *m, const int rows, const int cols)
 		for (int j=0; j<cols; ++j)
 		{
 			if (fcol) fcol=false;
-			else cout << ' ';
+			else buffer << ' ';
 
-			p(E(m,i,j));
+			p(E(m,i,j), buffer);
 		}
 
-		cout << endl;
+		buffer << endl;
 	}
 }
-void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols)
+void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols, ostream& buffer)
 {
 	for (int i=0; i<rows; ++i)
 	{
@@ -67,22 +68,43 @@ void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols)
 		for (int j=0; j<cols; ++j)
 		{
 			if (fcol) fcol=false;
-			else cout << ' ';
+			else buffer << ' ';
 
-			p(E(m1,i,j));
+			p(E(m1,i,j), buffer);
 		}
-		cout << " | ";
+		buffer << " | ";
 		fcol = true;
 		for (int j=0; j<cols; ++j)
 		{
 			if (fcol) fcol=false;
-			else cout << ' ';
+			else buffer << ' ';
 
-			p(E(m2,i,j));
+			p(E(m2,i,j), buffer);
 		}
 
-		cout << endl;
+		buffer << endl;
 	}
+}
+
+string TestCase::field_separator = "\t";
+
+        TestCase::TestCase(const string &__name, size_t __repeat)
+        : _name(__name), _repeat(__repeat)
+{}
+
+void TestCase::execute(std::ostream& buffer) const
+{
+        for (int i=1; i<=repeat(); i++)
+        {
+                buffer << name() << field_separator
+                       << i << '/' << repeat() << field_separator;
+                ostringstream buf;
+                if (performTest(&buf))
+                        buffer << "PASS";
+                else
+                        buffer << "FAIL";
+                buffer << field_separator << buf.str() << endl;
+        }
 }
 
 }
