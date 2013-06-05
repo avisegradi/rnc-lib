@@ -92,8 +92,9 @@ string TestCase::field_separator = "\t";
         : _name(__name), _repeat(__repeat)
 {}
 
-void TestCase::execute(std::ostream& buffer) const
+int TestCase::execute(std::ostream& buffer) const
 {
+        int failed = 0;
         for (int i=1; i<=repeat(); i++)
         {
                 buffer << name() << field_separator
@@ -101,10 +102,13 @@ void TestCase::execute(std::ostream& buffer) const
                 ostringstream buf;
                 if (performTest(&buf))
                         buffer << "PASS";
-                else
+                else {
+                        ++failed;
                         buffer << "FAIL";
+                }
                 buffer << field_separator << buf.str() << endl;
         }
+        return failed;
 }
 
 }

@@ -178,12 +178,13 @@ int main(int argc, char **argv)
         cases.push_back(new_TC(div_1, 5));
         cases.push_back(new_TC(divby_1, 5));
 
+        int failed = 0;
         for (case_list::const_iterator i = cases.begin();
              i!=cases.end(); i++)
         {
-                (*i)->execute(cout);
+                failed += (*i)->execute(cout);
         }
 
-        return 0;
+        return failed > 0;
 }
 

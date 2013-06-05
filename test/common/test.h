@@ -135,6 +135,7 @@ int main()
                     on its result.
 
                     \param buffer Output buffer
+                    \return Number of \e failed jobs
 
                     Example
                     \code
@@ -143,7 +144,7 @@ test_2_1	1/2	PASS
 test_2_1	2/2	FAIL	Details provided by performTest
                     \endcode
                  */
-                void execute(std::ostream& buffer) const;
+                int execute(std::ostream& buffer) const;
         };
 }
 }
