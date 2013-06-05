@@ -38,6 +38,7 @@
 #include "auto_arr_ptr"
 #include <stdio.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 using namespace std;
 using namespace rnc;
