@@ -88,7 +88,6 @@ namespace fq
             \test 1) a == mul(1, a)
             \test 2) mul(a, b) = mul(b, a) | a,b != 0
             \test 3) mul(a, mul(b, c)) == mul(mul(a, b), c)
-            \test 4) a == mul(a, mul(a, inv(a))) | a != 0
          */
         inline fq_t mul(fq_t a, fq_t b) {
                 if (a&&b)
