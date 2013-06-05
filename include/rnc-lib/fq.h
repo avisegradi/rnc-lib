@@ -86,8 +86,8 @@ namespace fq
             \return \f$ a*b\f$
 
             \test 1) a == mul(1, a)
-            \test 2) mul(a, b) = mul(b, a) | a,b != 0
-            \test 3) mul(a, mul(b, c)) == mul(mul(a, b), c)
+            \test 2) mul(a, b) = mul(b, a) | a,b != 0 (trivial case)
+            \test 3) mul(a, mul(b, c)) == mul(mul(a, b), c) | a,b,c != 0 (trivial case)
          */
         inline fq_t mul(fq_t a, fq_t b) {
                 if (a&&b)

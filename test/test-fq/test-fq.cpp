@@ -31,6 +31,12 @@ using namespace rnc::test;
 using namespace rnc::fq;
 
 fq_t getrand() { return rand() % fq_size; }
+fq_t getrand_notnull()
+{
+        dq_t a;
+        do { a = getrand(); } while (a==0);
+        return a;
+}
 
 template <bool (*pt)(ostream*buffer)>
 class FQ_TestCase : public TestCase
@@ -54,14 +60,73 @@ bool inv_1(ostream *buffer)
 }
 bool inv_2(ostream *buffer)
 {
-        fq_t a;
-        do { a = getrand(); } while (a==0);
+        fq_t a = getrand_notnull();
         if (buffer)
         {
                 (*buffer) << "a=";
                 p(a, *buffer);
         }
         return 1 == mul(a, inv(a));
+}
+bool invert_1(ostream *buffer)
+{
+        fq_t a = getrand_notnull();
+        fq_t t = a;
+        invert(t);
+        return inv(a) == t;
+}
+
+bool mul_1(ostream *buffer)
+{
+        fq_t a = getrand();
+        return a == mul(1, a);
+}
+
+bool mul_2(ostream *buffer)
+{
+        fq_t a = getrand_notnull();
+        fq_t b = getrand_notnull();
+        return mul(a,b) == mul(a, b);
+}
+
+bool mul_3(ostream *buffer)
+{
+        fq_t a = getrand_notnull();
+        fq_t b = getrand_notnull();
+        fq_t c = getrand_notnull();
+        return mul(a, mul(b, c)) == mul(mul(a, b), c);
+}
+
+bool addto_1(ostream *buffer)
+{
+        fq_t a = getrand();
+        fq_t b = getrand();
+        fq_t t = a;
+        addto(t, b);
+        return t == add(a,b);
+}
+
+bool addto_mul_1(ostream *buffer)
+{
+        fq_t a = getrand();
+        return a == mul(1, a);
+}
+
+
+bool div_1(ostream *buffer)
+{
+        fq_t a = getrand();
+        fq_t b = getrand_notnull();
+        return a == mul(b, div(a,b));
+}
+
+bool divby_1(ostream *buffer)
+{
+        fq_t a = getrand();
+        fq_t b = getrand_notnull();
+        fq_t t = a;
+        divby(t, b);
+        return t == div(a,b);
 }
 
 int main(int argc, char **argv)
