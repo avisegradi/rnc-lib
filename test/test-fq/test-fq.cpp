@@ -33,7 +33,7 @@ using namespace rnc::fq;
 fq_t getrand() { return rand() % fq_size; }
 fq_t getrand_notnull()
 {
-        dq_t a;
+        fq_t a;
         do { a = getrand(); } while (a==0);
         return a;
 }
