@@ -79,6 +79,37 @@ namespace fq
          */
         void init();
 
+        /**
+           \addtogroup genrand Generating random elements
+           @{
+         */
+
+        /** \brief Initialize random number generator
+         */
+        void init_random();
+
+        /** \brief Initialize random number generator with a given seed
+
+            \remark If and when the random number generation will use an
+            external random generator (e.g. /dev/random), this function will be
+            deprecated. Use this function only for debugging purposes.
+         */
+        void init_random(unsigned int seed);
+
+        /** \brief Gets the seed used to initialize the random number generator
+
+            \remark If and when the random number generation will use an
+            external random generator (e.g. /dev/random), this function will be
+            deprecated. Use this function only for debugging purposes.
+         */
+        unsigned int get_seed();
+
+        /** \brief Gets a random element from \f$\mathbb{F}_q\f$
+
+            \remark Currently, this function uses the standard rand() function.
+         */
+        fq_t random_element();
+
         /// \addtogroup fqops Operations over the finite field
         /// @{
 

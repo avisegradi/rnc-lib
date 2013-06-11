@@ -22,7 +22,6 @@
 
 #include <rnc-lib/matrix.h>
 #include <string.h>
-#include <stdlib.h>
 #include <glib.h>
 #include <mkstr>
 #include <auto_arr_ptr>
@@ -303,15 +302,9 @@ void mul(const fq_t *m1, const fq_t *m2, fq_t *md,
 
 void rand_matr(fq_t *m, const int rows, const int cols)
 {
-	static int seed=0;
-	if (!seed) {
-		seed=1;
-		srand(time(NULL));
-	}
-
 	for (int i=0;i<rows;++i)
 		for (int j=0; j<cols; ++j)
-			E(m,i,j) = rand() % fq_size;
+			E(m,i,j) = random_element();
 }
 
 }

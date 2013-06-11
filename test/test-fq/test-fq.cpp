@@ -24,17 +24,15 @@
 #include <rnc>
 #include <iostream>
 #include <list>
-#include <stdlib.h>
 
 using namespace std;
 using namespace rnc::test;
 using namespace rnc::fq;
 
-fq_t getrand() { return rand() % fq_size; }
 fq_t getrand_notnull()
 {
         fq_t a;
-        do { a = getrand(); } while (a==0);
+        do { a = random_element(); } while (a==0);
         return a;
 }
 
@@ -96,7 +94,7 @@ bool invert_1(ostream *buffer)
 
 bool mul_1(ostream *buffer)
 {
-        fq_t a = getrand();
+        fq_t a = random_element();
         PRINT(a);
         return a == mul(1, a);
 }
@@ -120,8 +118,8 @@ bool mul_3(ostream *buffer)
 
 bool addto_1(ostream *buffer)
 {
-        fq_t a = getrand();
-        fq_t b = getrand();
+        fq_t a = random_element();
+        fq_t b = random_element();
         fq_t t = a;
         PRINT2(a, b);
         addto(t, b);
@@ -130,9 +128,9 @@ bool addto_1(ostream *buffer)
 
 bool addto_mul_1(ostream *buffer)
 {
-        fq_t d = getrand();
-        fq_t a = getrand();
-        fq_t b = getrand();
+        fq_t d = random_element();
+        fq_t a = random_element();
+        fq_t b = random_element();
         PRINT3(d, a, b);
         fq_t t = d;
         addto_mul(d, a, b);
@@ -141,7 +139,7 @@ bool addto_mul_1(ostream *buffer)
 
 bool div_1(ostream *buffer)
 {
-        fq_t a = getrand();
+        fq_t a = random_element();
         fq_t b = getrand_notnull();
         PRINT2(a, b);
         return a == mul(b, div(a,b));
@@ -149,7 +147,7 @@ bool div_1(ostream *buffer)
 
 bool divby_1(ostream *buffer)
 {
-        fq_t a = getrand();
+        fq_t a = random_element();
         fq_t b = getrand_notnull();
         PRINT2(a, b);
         fq_t t = a;
@@ -159,7 +157,8 @@ bool divby_1(ostream *buffer)
 
 int main(int argc, char **argv)
 {
-        srand(time(NULL));
+        init_random();
+        cout << "Seed=" << get_seed() << endl;
 
         init();
 
