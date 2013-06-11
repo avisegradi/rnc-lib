@@ -48,7 +48,7 @@ static void checkGError(char const * const context, GError *error)
 	}
 }
 
-void set_identity(fq_t *m, const int rows, const int cols) throw()
+void set_identity(Matrix m, const int rows, const int cols) throw()
 {
 	fq_t* p = m;
 	for (int i=0; i<rows; ++i)
@@ -56,12 +56,12 @@ void set_identity(fq_t *m, const int rows, const int cols) throw()
 			*p = (int)(i==j);
 }
 
-void copy(const fq_t *m, fq_t *md, const int rows, const int cols) throw()
+void copy(const Matrix m, Matrix md, const int rows, const int cols) throw()
 {
 	memcpy(md, m, rows*cols*sizeof(fq_t));
 }
 
-bool invert(const fq_t *m_in, fq_t *res, const int rows, const int cols) throw ()
+bool invert(const Matrix m_in, Matrix res, const int rows, const int cols) throw ()
 {
 	auto_arr_ptr<fq_t> m_ap = new fq_t [rows*cols];
 	fq_t *m = m_ap;
@@ -122,11 +122,11 @@ bool invert(const fq_t *m_in, fq_t *res, const int rows, const int cols) throw (
 typedef struct muldata
 {
         /// \brief Left-hand side matrix
-	const fq_t *m1;
+	const Matrix m1;
         /// \brief Right-hand side matrix
-	const fq_t *m2;
+	const Matrix m2;
         /// \brief Result address
-	fq_t *md;
+	Matrix md;
         /// \brief Rows count of #m1
 	const int rows1;
         /// \brief Columns of #m1 (== rows of #m2)
@@ -143,9 +143,9 @@ void mulrow_blk(gpointer bb, gpointer d)
 	const int cols1 = data->cols1;
 	const int cols2 = data->cols2;
 	const int rows1 = data->rows1;
-	fq_t * const md = data->md;
-	const fq_t * const m1 = data->m1;
-	const fq_t * const m2 = data->m2;
+	Matrix md = data->md;
+	const Matrix m1 = data->m1;
+	const Matrix m2 = data->m2;
 
 	int k, j;
 	const long i = (long)bb - 1;
@@ -178,9 +178,9 @@ void mulrow_nonblk(gpointer row, gpointer d)
 	const muldata *data = reinterpret_cast<muldata*>(d);
 	const int cols2=data->cols2;
 	const int cols1=data->cols1;
-	fq_t * const md = data->md;
-	const fq_t * const m1 = data->m1;
-	const fq_t * const m2 = data->m2;
+	Matrix md = data->md;
+	const Matrix m1 = data->m1;
+	const Matrix m2 = data->m2;
 
 	int j, k;
 
@@ -195,7 +195,7 @@ void mulrow_nonblk(gpointer row, gpointer d)
 	}
 }
 
-void pmul_blk(const fq_t *m1, const fq_t *m2, fq_t *md,
+void pmul_blk(const Matrix m1, const Matrix m2, Matrix md,
 	      const int rows1, const int cols1, int const cols2)
 {
 	struct muldata d = { m1, m2, md, rows1, cols1, cols2 };
@@ -213,7 +213,7 @@ void pmul_blk(const fq_t *m1, const fq_t *m2, fq_t *md,
 	g_thread_pool_free(pool, false, true);
 }
 
-void pmul_nonblk(const fq_t *m1, const fq_t *m2, fq_t *md,
+void pmul_nonblk(const Matrix m1, const Matrix m2, Matrix md,
 	      const int rows1, const int cols1, int const cols2)
 {
 	struct muldata d = { m1, m2, md, rows1, cols1, cols2 };
@@ -231,7 +231,7 @@ void pmul_nonblk(const fq_t *m1, const fq_t *m2, fq_t *md,
 	g_thread_pool_free(pool, false, true);
 }
 
-void pmul(const fq_t *m1, const fq_t *m2, fq_t *md,
+void pmul(const Matrix m1, const Matrix m2, Matrix md,
 	 const int rows1, const int cols1, int const cols2)
 {
 	if (NCPUS == 1)
@@ -247,7 +247,7 @@ void pmul(const fq_t *m1, const fq_t *m2, fq_t *md,
 	}
 }
 
-void mul_nonblk(const fq_t *m1, const fq_t *m2, fq_t *md,
+void mul_nonblk(const Matrix m1, const Matrix m2, Matrix md,
 	 const int rows1, const int cols1,int const cols2)
 {
 	for (int i=0; i<rows1; ++i)
@@ -260,7 +260,7 @@ void mul_nonblk(const fq_t *m1, const fq_t *m2, fq_t *md,
 		}
 
 }
-void mul_blk(const fq_t *m1, const fq_t *m2, fq_t *md,
+void mul_blk(const Matrix m1, const Matrix m2, Matrix md,
 	 const int rows1, const int cols1,int const cols2)
 {
 	int i, j, k, i0,j0,k0, li, lj, lk;
@@ -290,7 +290,7 @@ void mul_blk(const fq_t *m1, const fq_t *m2, fq_t *md,
 }
 
 // (rows1 x cols1) * (cols1 x cols2) = (rows1 x cols2)
-void mul(const fq_t *m1, const fq_t *m2, fq_t *md,
+void mul(const Matrix m1, const Matrix m2, Matrix md,
 	 const int rows1, const int cols1,int const cols2)
 {
 	if (BLOCK_SIZE == 1)
@@ -299,7 +299,7 @@ void mul(const fq_t *m1, const fq_t *m2, fq_t *md,
 		mul_blk(m1, m2, md, rows1, cols1, cols2);
 }
 
-void rand_matr(fq_t *m, const int rows, const int cols)
+void rand_matr(Matrix m, const int rows, const int cols)
 {
 	for (int i=0;i<rows;++i)
 		for (int j=0; j<cols; ++j)

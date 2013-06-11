@@ -33,6 +33,8 @@ namespace matrix
 {
         using namespace fq;
 
+        typedef fq_t *Matrix;
+
         /** \brief Number of threads to use.
 
             Matrix multiplication will use this many threads.
@@ -84,12 +86,12 @@ namespace matrix
         /// @{
 
         /** \brief Initialize a matrix to identity. */
-        void set_identity(fq_t *m, const int rows, const int cols) throw();
+        void set_identity(Matrix m, const int rows, const int cols) throw();
         /** \brief Copy a matrix
             @param m Matrix to be copied
             @param md Destination address
          */
-        void copy(const fq_t *m, fq_t *md, const int rows, const int cols) throw();
+        void copy(const Matrix m, Matrix md, const int rows, const int cols) throw();
         /** \brief Invert a matrix
 
             @param m_in Matrix to be inverted
@@ -97,7 +99,7 @@ namespace matrix
 
             \test A = mul(A, mul(A, invert(A))) | \f$\exists A^{-1}\f$
         */
-        bool invert(const fq_t *m_in, fq_t *res,
+        bool invert(const Matrix m_in, Matrix res,
                     const int rows, const int cols) throw ();
 
         // (rows1 x cols1) * (cols1 x cols2) = (rows1 x cols2)
@@ -128,7 +130,7 @@ namespace matrix
             is passed as input (instead of storing the whole matrix in a single
             line).
          */
-        void mul(const fq_t *m1, const fq_t *m2, fq_t *md,
+        void mul(const Matrix m1, const Matrix m2, Matrix md,
                  const int rows1, const int cols1,int const cols2);
         /** \brief Parallelized version of #mul.
 
@@ -137,7 +139,7 @@ namespace matrix
             If NCPUS is greater than 1, this function will spawn NCPUS threads
             to perform the multiplication.
          */
-        void pmul(const fq_t *m1, const fq_t *m2, fq_t *md,
+        void pmul(const Matrix m1, const Matrix m2, Matrix md,
                  const int rows1, const int cols1,int const cols2);
 
         /** \brief Generates a random matrix.
@@ -147,7 +149,7 @@ namespace matrix
             @param rows Number of rows
             @param cols Number of columns
          */
-        void rand_matr(fq_t *m, const int rows, const int cols);
+        void rand_matr(Matrix m, const int rows, const int cols);
 
         /// @} @}
 }

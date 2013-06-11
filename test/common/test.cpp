@@ -33,7 +33,9 @@ namespace rnc
 namespace test
 {
 
-fq::fq_t read(std::istream &)
+using rnc::matrix::Matrix;
+
+fq::fq_t read(std::istream &is)
 {
         return 0;
 }
@@ -44,7 +46,7 @@ void p(const fq_t v, ostream& buffer)
 	buffer << hex << setfill('0') << setw(4) << (int)v;
 }
 
-void p(const fq_t *m, const int rows, const int cols, ostream& buffer)
+void p(const Matrix m, const int rows, const int cols, ostream& buffer)
 {
 	for (int i=0; i<rows; ++i)
 	{
@@ -60,7 +62,8 @@ void p(const fq_t *m, const int rows, const int cols, ostream& buffer)
 		buffer << endl;
 	}
 }
-void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols, ostream& buffer)
+void p(const Matrix m1, const Matrix m2,
+       const int rows, const int cols, ostream& buffer)
 {
 	for (int i=0; i<rows; ++i)
 	{
