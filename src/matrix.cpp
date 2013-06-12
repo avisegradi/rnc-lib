@@ -263,7 +263,6 @@ void mul_nonblk(const fq_t *m1, const fq_t *m2, fq_t *md,
 void mul_blk(const fq_t *m1, const fq_t *m2, fq_t *md,
 	 const int rows1, const int cols1,int const cols2)
 {
-	fq_t* delem = md;
 	int i, j, k, i0,j0,k0, li, lj, lk;
 
 	memset(md, 0, rows1*cols2*sizeof(fq_t));

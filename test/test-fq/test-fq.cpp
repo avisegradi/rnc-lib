@@ -155,7 +155,7 @@ bool divby_1(ostream *buffer)
         return t == div(a,b);
 }
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
         init_random();
         cout << "Seed=" << get_seed() << endl;

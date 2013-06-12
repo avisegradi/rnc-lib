@@ -127,7 +127,7 @@ int main()
                 /** \brief The name of the test case */
                 const std::string& name() const { return _name; }
                 /** \brief Number of times to repeat when #execute is calledtes */
-                const size_t repeat() const { return _repeat; }
+                size_t repeat() const { return _repeat; }
 
                 /** \brief Generate output based on the result of #performTest
 

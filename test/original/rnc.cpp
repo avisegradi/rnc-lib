@@ -176,7 +176,7 @@ char* timediff(const struct timeval& t1,
 		const struct timeval& t2)
 {
 	static char buf[32];
-	sprintf(buf, "%lf", tdiff(t1, t2));
+	sprintf(buf, "%f", tdiff(t1, t2));
 	return buf;
 }
 

@@ -80,7 +80,7 @@ public:
         }
 };
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
         init_random();
         cout << "Seed=" << get_seed() << endl;

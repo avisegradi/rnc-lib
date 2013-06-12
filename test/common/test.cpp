@@ -33,7 +33,7 @@ namespace rnc
 namespace test
 {
 
-fq::fq_t read(std::istream &is)
+fq::fq_t read(std::istream &)
 {
         return 0;
 }
@@ -95,7 +95,7 @@ string TestCase::field_separator = "\t";
 int TestCase::execute(std::ostream& buffer) const
 {
         int failed = 0;
-        for (int i=1; i<=repeat(); i++)
+        for (size_t i=1; i<=repeat(); i++)
         {
                 buffer << name() << field_separator
                        << i << '/' << repeat() << field_separator;
