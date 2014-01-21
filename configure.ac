@@ -105,5 +105,6 @@ AC_CONFIG_FILES([
                 test/common/Makefile
                 test/test-fq/Makefile
                 test/test-matr/Makefile
+                test/test-rnd/Makefile
                 rnc-1.0.pc])
 AC_OUTPUT
