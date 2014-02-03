@@ -33,7 +33,9 @@ namespace matrix
 {
         using namespace fq;
 
-        typedef fq_t *Matrix;
+        typedef fq_t Element;
+        typedef Element *Row;
+        typedef Row *Matrix;
 
         /** \brief Number of threads to use.
 
@@ -62,23 +64,14 @@ namespace matrix
         /// changed \sa mul
         /// @{
 
-/// \brief  Row address (assuming the number of columns is \c cols)
-#define RA(m,r)   ((m)+(r)*cols)
+/// \brief  Row address
+#define RA(m,r)   ((m)+(r))
 /// \brief  Row element
-#define RE(ra, c) (*(ra + (c)))
+#define RE(ra, c) (*((ra) + (c)))
 /// \brief  Address
 #define A(m,r,c) (RA(m,r)+(c))
 /// \brief  Element
 #define E(m,r,c) (*A(m,r,c))
-
-/// \brief  Row address
-#define RA_(m,r, cols)   ((m)+(r)*cols)
-/// \brief  Row element
-#define RE_(ra, c, cols) RE(ra, c)
-/// \brief  Address
-#define A_(m,r,c,cols) (RA_(m,r,cols)+(c))
-/// \brief  Element
-#define E_(m,r,c,cols) (*A_(m,r,c,cols))
 
         /// @}
 
@@ -150,6 +143,25 @@ namespace matrix
             @param cols Number of columns
          */
         void rand_matr(Matrix m, const int rows, const int cols);
+
+        /** \brief Allocates a matrix.
+
+            @param rows Number of rows
+            @param cols Number of columns
+            @param init0 Initialize the matrix to contain 0s
+
+            @return The allocated matrix
+         */
+        Matrix create_matr(const int rows, const int cols, bool init0 = false);
+
+        /** \brief Allocates a row of a matrix.
+
+            @param cols Number of columns
+            @param init0 Initialize the row to contain 0s
+
+            @return The allocated row
+         */
+        Row create_row(const int cols, bool init0 = false);
 
         /// @} @}
 }

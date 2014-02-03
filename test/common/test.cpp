@@ -33,14 +33,14 @@ namespace rnc
 namespace test
 {
 
-using rnc::matrix::Matrix;
+using namespace rnc::matrix;
 
 fq::fq_t read(std::istream &is)
 {
         return 0;
 }
 
-void p(const fq_t v, ostream& buffer)
+void p(const Element v, ostream& buffer)
 {
         /// \todo setw(4) <- setw (ifdef(Q256) ? 2 : 4)
 	buffer << hex << setfill('0') << setw(4) << (int)v;
@@ -48,41 +48,49 @@ void p(const fq_t v, ostream& buffer)
 
 void p(const Matrix m, const int rows, const int cols, ostream& buffer)
 {
-	for (int i=0; i<rows; ++i)
-	{
-		bool fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else buffer << ' ';
+        int i, j;
+        Row *row;
+        Element *elem;
+	for (i=0, row=m; i<rows; ++i, ++row)
+        {
+                bool fcol = true;
+		for (j=0, elem=*row; j<cols; ++j, ++elem)
+                {
+                        if (fcol) fcol=false;
+                        else buffer << ' ';
+                        p(*elem, buffer);
+                }
 
-			p(E(m,i,j), buffer);
-		}
-
-		buffer << endl;
-	}
+                buffer << endl;
+        }
 }
 void p(const Matrix m1, const Matrix m2,
        const int rows, const int cols, ostream& buffer)
 {
-	for (int i=0; i<rows; ++i)
-	{
-		bool fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else buffer << ' ';
+        int i, j;
+        Row *rowA, *rowB;
+        Element *elem;
+	for (i=0, rowA=m1, rowB=m2;
+             i<rows;
+             ++i, ++rowA, ++rowB)
+        {
+                bool fcol = true;
+		for (j=0, elem=*rowA; j<cols; ++j, ++elem)
+                {
+                        if (fcol) fcol=false;
+                        else buffer << ' ';
 
-			p(E(m1,i,j), buffer);
-		}
+                        p(*elem, buffer);
+                }
+
 		buffer << " | ";
 		fcol = true;
-		for (int j=0; j<cols; ++j)
+                for (j=0, elem=*rowB; j<cols; ++j, ++elem)
 		{
 			if (fcol) fcol=false;
 			else buffer << ' ';
 
-			p(E(m2,i,j), buffer);
+			p(*elem, buffer);
 		}
 
 		buffer << endl;

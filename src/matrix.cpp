@@ -21,6 +21,8 @@
  */
 
 #include <rnc-lib/matrix.h>
+#include <rnc-lib/mt.h>
+#include <time.h>
 #include <string.h>
 #include <glib.h>
 #include <mkstr>
@@ -50,10 +52,12 @@ static void checkGError(char const * const context, GError *error)
 
 void set_identity(Matrix m, const int rows, const int cols) throw()
 {
-	fq_t* p = m;
-	for (int i=0; i<rows; ++i)
-		for (int j=0; j<cols; ++j, ++p)
-			*p = (int)(i==j);
+        int i, j;
+        Row *row;
+        Element *elem;
+	for (i=0, row=m; i<rows; ++i, ++row)
+		for (j=0, elem=*row; j<cols; ++j, ++elem)
+                        *elem = (int)i==j;
 }
 
 void copy(const Matrix m, Matrix md, const int rows, const int cols) throw()
@@ -301,10 +305,35 @@ void mul(const Matrix m1, const Matrix m2, Matrix md,
 
 void rand_matr(Matrix m, const int rows, const int cols)
 {
-	for (int i=0;i<rows;++i)
-		for (int j=0; j<cols; ++j)
-			E(m,i,j) = random_element();
+        random::mt_state rnd_state;
+        random::init(&rnd_state, time(NULL));
+
+        int i, j;
+        Row *row;
+        Element *elem;
+	for (i=0, row=m; i<rows; ++i, ++row)
+		for (j=0, elem=*row; j<cols; ++j, ++elem)
+                        *elem = random::generate_fq(&rnd_state);
 }
+
+Matrix create_matr(const int rows, const int cols, bool init0)
+{
+        Matrix m = new Row[rows];
+        int i;
+        Row *r;
+        for (i=0, r=m; i<rows; ++i, ++r)
+                *r = create_row(cols, init0);
+        return m;
+}
+
+Row create_row(const int cols, bool init0)
+{
+        if (init0)
+                return new Element[cols]();
+        else
+                return new Element[cols];
+}
+
 
 }
 }

@@ -45,8 +45,13 @@ public:
                   _cols(cols)
         {}
 
-        bool equals(const fq_t * const m1, const fq_t * const m2) const {
-                return 0 == memcmp(m1, m2, sizeof(fq_t) * _rows * _cols);
+        bool equals(Matrix m1, Matrix m2) const {
+                const int rowsize = sizeof(Element) * _cols;
+                int i;
+                Row *r1, *r2;
+                for (i=0, r1=m1, r2=m2; i<_rows; ++i, ++r1, ++r2)
+                        if (0 != memcmp(r1, r2, rowsize)) return false;
+                return true;
         }
 };
 
@@ -58,8 +63,8 @@ public:
 
         bool performTest(ostream *buffer) const
         {
-                fq_t *m1 = new fq_t [_rows * _cols];
-                fq_t *m2 = new fq_t [_rows * _cols];
+                Matrix m1 = create_matr(_rows, _cols);
+                Matrix m2 = create_matr(_rows, _cols);
 
                 set_identity(m1, _rows, _cols);
                 set_identity(m2, _rows, _cols);
