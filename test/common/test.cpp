@@ -33,60 +33,68 @@ namespace rnc
 namespace test
 {
 
-using rnc::matrix::Matrix;
+using namespace rnc::matrix;
 
-fq::fq_t read(std::istream &is)
+fq::fq_t read(std::istream &)
 {
         return 0;
 }
 
-void p(const fq_t v, ostream& buffer)
+void p(const Element v, ostream& buffer)
 {
         /// \todo setw(4) <- setw (ifdef(Q256) ? 2 : 4)
-	buffer << hex << setfill('0') << setw(4) << (int)v;
+        buffer << hex << setfill('0') << setw(4) << (int)v;
 }
 
-void p(const Matrix m, const int rows, const int cols, ostream& buffer)
+void p(const Matrix &m, ostream& buffer)
 {
-	for (int i=0; i<rows; ++i)
-	{
-		bool fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else buffer << ' ';
+        CACHE_DIMS(m);
 
-			p(E(m,i,j), buffer);
-		}
+        Row *row = m.rows;
+        for (int i=nrows; i>0; --i, ++row)
+        {
+                bool fcol = true;
+                Element *elem = *row;
+                for (size_t j=0; j<ncols; ++j, ++elem)
+                {
+                        if (fcol) fcol=false;
+                        else buffer << ' ';
+                        p(*elem, buffer);
+                }
 
-		buffer << endl;
-	}
+                buffer << endl;
+        }
 }
-void p(const Matrix m1, const Matrix m2,
-       const int rows, const int cols, ostream& buffer)
+void p(const Matrix &m1, const Matrix &m2, ostream& buffer)
 {
-	for (int i=0; i<rows; ++i)
-	{
-		bool fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else buffer << ' ';
+        CACHE_DIMS(m1);
 
-			p(E(m1,i,j), buffer);
-		}
-		buffer << " | ";
-		fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else buffer << ' ';
+        Row *rowA = m1.rows, *rowB = m2.rows;
+        for (size_t i=0; i<nrows; ++i, ++rowA, ++rowB)
+        {
+                bool fcol = true;
+                Element *elem = *rowA;
+                for (size_t j=0; j<ncols; ++j, ++elem)
+                {
+                        if (fcol) fcol=false;
+                        else buffer << ' ';
 
-			p(E(m2,i,j), buffer);
-		}
+                        p(*elem, buffer);
+                }
 
-		buffer << endl;
-	}
+                buffer << " | ";
+                fcol = true;
+                elem = *rowB;
+                for (size_t j=0; j<ncols; ++j, ++elem)
+                {
+                        if (fcol) fcol=false;
+                        else buffer << ' ';
+
+                        p(*elem, buffer);
+                }
+
+                buffer << endl;
+        }
 }
 
 string TestCase::field_separator = "\t";

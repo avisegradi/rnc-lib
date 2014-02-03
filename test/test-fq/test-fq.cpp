@@ -179,11 +179,10 @@ int main(int, char **)
 
         int failed = 0;
         for (case_list::const_iterator i = cases.begin();
-             i!=cases.end(); i++)
+             i!=cases.end(); ++i)
         {
                 failed += (*i)->execute(cout);
         }
 
         return failed > 0;
 }
-
