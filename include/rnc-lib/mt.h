@@ -23,6 +23,7 @@
 #ifndef MT_H
 #define MT_H
 
+#include <rnc-lib/fq.h>
 #include <stdint.h>
 
 namespace rnc
@@ -70,6 +71,11 @@ namespace random
                 t0 ^= -((int32_t)(t1 & 1)) & state->tmat;
 
                 return t0;
+        }
+
+        inline random_type generate_fq(mt_state *state)
+        {
+                return generate(state) % fq_size;
         }
 
         inline double generateP(mt_state *state)
