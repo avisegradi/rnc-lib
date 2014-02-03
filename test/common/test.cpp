@@ -35,7 +35,7 @@ namespace test
 
 using namespace rnc::matrix;
 
-fq::fq_t read(std::istream &is)
+fq::fq_t read(std::istream &)
 {
         return 0;
 }
@@ -46,14 +46,15 @@ void p(const Element v, ostream& buffer)
 	buffer << hex << setfill('0') << setw(4) << (int)v;
 }
 
-void p(const Matrix m, const int rows, const int cols, ostream& buffer)
+void p(const Matrix &m, ostream& buffer)
 {
-        int i, j;
-        Row *row;
-        Element *elem;
-	for (i=0, row=m; i<rows; ++i, ++row)
+        CACHE_DIMS(m);
+
+        Row *row = m.rows;
+	for (int i=nrows; i>0; --i, ++row)
         {
                 bool fcol = true;
+                Element *elem;
 		for (j=0, elem=*row; j<cols; ++j, ++elem)
                 {
                         if (fcol) fcol=false;

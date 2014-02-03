@@ -50,25 +50,33 @@ static void checkGError(char const * const context, GError *error)
 	}
 }
 
-void set_identity(Matrix m, const int rows, const int cols) throw()
+void set_identity(Matrix &m) throw()
 {
-        int i, j;
-        Row *row;
-        Element *elem;
-	for (i=0, row=m; i<rows; ++i, ++row)
-		for (j=0, elem=*row; j<cols; ++j, ++elem)
+        const int ncols = m.ncols;
+        Row *row = m.rows;
+	for (int i=m.nrows; i>0; --i, ++row)
+        {
+                Element *elem = *row;
+		for (int j=0; j<ncols; ++j, ++elem)
                         *elem = (int)i==j;
+        }
+}
+/*
+void copy(const Matrix m, Matrix md) throw()
+{
+        const int nrows = m.nrows;
+        const int ncols = m.ncols;
+        const size_t rowsize = ncols*sizeof(Element);
+
+        Row *row = m.rows, *rowD = md.rows;
+	for (int i=0; i<nrows; ++i, ++row, ++rowD)
+                memcpy(rowD->elements, row->elements, rowsize);
 }
 
-void copy(const Matrix m, Matrix md, const int rows, const int cols) throw()
+bool invert(const Matrix m_in, Matrix res) throw ()
 {
-	memcpy(md, m, rows*cols*sizeof(fq_t));
-}
-
-bool invert(const Matrix m_in, Matrix res, const int rows, const int cols) throw ()
-{
-	auto_arr_ptr<fq_t> m_ap = new fq_t [rows*cols];
-	fq_t *m = m_ap;
+	auto_matr_ptr m_ap = create_matr(m_in.nrows, m_in.ncols);
+        Matrix m = m_ap;
 	copy(m_in, m, rows, cols);
 	set_identity(res, rows, cols);
 
@@ -122,7 +130,7 @@ bool invert(const Matrix m_in, Matrix res, const int rows, const int cols) throw
 
     Matrix multiplication threads process workunits described with this
     construct.
- */
+ * /
 typedef struct muldata
 {
         /// \brief Left-hand side matrix
@@ -315,24 +323,8 @@ void rand_matr(Matrix m, const int rows, const int cols)
 		for (j=0, elem=*row; j<cols; ++j, ++elem)
                         *elem = random::generate_fq(&rnd_state);
 }
+*/
 
-Matrix create_matr(const int rows, const int cols, bool init0)
-{
-        Matrix m = new Row[rows];
-        int i;
-        Row *r;
-        for (i=0, r=m; i<rows; ++i, ++r)
-                *r = create_row(cols, init0);
-        return m;
-}
-
-Row create_row(const int cols, bool init0)
-{
-        if (init0)
-                return new Element[cols]();
-        else
-                return new Element[cols];
-}
 
 
 }
