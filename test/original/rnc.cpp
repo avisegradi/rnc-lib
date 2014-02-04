@@ -185,8 +185,6 @@ try
 {
         fq::init();
 
-        g_thread_init(0);
-
         if (argc < 7)
                 throw string(MKStr() << "usage: " << argv[0] <<
                              " <input filename> <N> <ncpus> <blocksize> <mode> <id>");
