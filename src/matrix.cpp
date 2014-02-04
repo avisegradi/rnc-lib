@@ -21,7 +21,6 @@
  */
 
 #include <rnc-lib/matrix.h>
-#include <rnc-lib/mt.h>
 #include <time.h>
 #include <string.h>
 #include <glib.h>
@@ -338,19 +337,16 @@ void mul(const Matrix &m1, const Matrix &m2, Matrix &md)
                 mul_blk(m1, m2, md);
 }
 
-void rand_matr(Matrix &m)
+void rand_matr(Matrix &m, random::mt_state *rnd_state)
 {
         CACHE_DIMS(m);
-
-        random::mt_state rnd_state;
-        random::init(&rnd_state, time(NULL));
 
         Row *row = m.rows;
         for (size_t i=0; i<nrows; ++i, ++row)
         {
                 Element *elem = *row;
                 for (size_t j=0; j<ncols; ++j, ++elem)
-                        *elem = random::generate_fq(&rnd_state);
+                        *elem = random::generate_fq(rnd_state);
         }
 }
 

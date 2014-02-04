@@ -32,6 +32,8 @@ using namespace rnc::test;
 using namespace rnc::fq;
 using namespace rnc::matrix;
 
+rnc::random::mt_state rnd_state;
+
 class Matrix_TestCase : public TestCase
 {
 protected:
@@ -83,10 +85,11 @@ public:
 
 int main(int, char **)
 {
-        init_random();
-        cout << "Seed=" << get_seed() << endl;
 
         init();
+        rnc::random::random_type seed = time(NULL);
+        cout << "Seed=" << seed << endl;
+        rnc::random::init(&rnd_state, seed);
 
         cout << "Q=" << fq_size << endl;
 
