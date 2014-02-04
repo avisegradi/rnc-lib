@@ -45,6 +45,8 @@ using namespace rnc;
 using namespace rnc::fq;
 using namespace rnc::matrix;
 
+rnc::random::mt_state rnd_state;
+
 template <class T>
 class SetFinally
 {
@@ -185,6 +187,8 @@ try
 {
         fq::init();
 
+        random::init(&rnd_state, time(NULL));
+
         if (argc < 7)
                 throw string(MKStr() << "usage: " << argv[0] <<
                              " <input filename> <N> <ncpus> <blocksize> <mode> <id>");
@@ -219,7 +223,7 @@ try
                         gettimeofday(&begin_gen, 0);
                         do {
                                 ++sing;
-                                rand_matr(m1);
+                                rand_matr(m1, &rnd_state);
                         } while (!invert(m1, minv));
                         gettimeofday(&end_gen, 0);
                 }
@@ -251,8 +255,14 @@ try
                 printf("t=%s ", timediff(begin, end));
                 printf("tp=%s\n", throughput(fsize, begin, end));
 
-// \todo        FileMap::save(m1, N*N*sizeof(fq_t), fmatr);
-// \todo        FileMap::save(mc, fsize, fout);
+                {
+                        FileMap fm(fmatr, N*N*sizeof(Element));
+                        copy(m1, fm.addr());
+                }
+                {
+                        FileMap fm(fout, fsize);
+                        copy(mc, fm.addr());
+                }
 
                 if (sing > 1)
                         printf("# Singular matrices generated: %d\n", sing-1);
@@ -312,7 +322,10 @@ try
                 printf("t=%s ", timediff(begin, end));
                 printf("tp=%s\n", throughput(fsize, begin, end));
 
-// \todo        FileMap::save(md, fsize, fdec);
+                {
+                        FileMap fm(fdec, fsize);
+                        copy(md, fm.addr());
+                }
         }
 
 __break:
