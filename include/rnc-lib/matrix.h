@@ -142,7 +142,7 @@ namespace matrix
             @param m Matrix to be copied
             @param md Destination address
          */
-        void copy(const Matrix &m, void* dest) throw();
+        void copy(const Matrix &m, Element* dest) throw();
         /** \brief Invert a matrix
 
             @param m_in Matrix to be inverted
@@ -198,25 +198,6 @@ namespace matrix
             @param cols Number of columns
          */
         void rand_matr(Matrix &m);
-
-        /** \brief Allocates a matrix.
-
-            @param rows Number of rows
-            @param cols Number of columns
-            @param init0 Initialize the matrix to contain 0s
-
-            @return The allocated matrix
-         */
-        Matrix create_matr(const int rows, const int cols, bool init0 = false);
-
-        /** \brief Allocates a row of a matrix.
-
-            @param cols Number of columns
-            @param init0 Initialize the row to contain 0s
-
-            @return The allocated row
-         */
-        Row create_row(const int cols, bool init0 = false);
 
         /// @} @}
 }
