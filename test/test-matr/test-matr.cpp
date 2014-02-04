@@ -86,9 +86,68 @@ public:
         }
 };
 
+class RndEq : public Matrix_TestCase
+{
+public:
+        RndEq(size_t n, const int rows, const int cols)
+                : Matrix_TestCase("RndEq (A != B)", n, rows, cols) {}
+
+        bool performTest(ostream *buffer) const
+        {
+                Matrix _A(_rows, _cols);
+                Matrix _B(_rows, _cols);
+
+                rand_matr(_A, &rnd_state);
+                rand_matr(_B, &rnd_state);
+
+                if (buffer)
+                {
+                        (*buffer) << '(' << _rows << 'x' << _cols << ')';
+                        // p(m1, m2, _rows, _cols, *buffer);
+                }
+
+                bool retval = !equals(_A, _B);
+
+                if (!retval && _rows == 5 && _cols==5)
+                {
+                        (*buffer) << '\n';
+                        p(_A, _B, *buffer);
+                }
+
+                return retval;
+        }
+};
+
+class Identity : public Matrix_TestCase
+{
+public:
+        Identity(size_t n, const int rows, const int cols)
+                : Matrix_TestCase("Identity (I*A=A)", n, rows, cols) {}
+
+        bool performTest(ostream *buffer) const
+        {
+                Matrix _I(_rows, _rows);
+                Matrix _A(_rows, _cols);
+                Matrix _D(_rows, _cols);
+
+                set_identity(_I);
+                rand_matr(_A, &rnd_state);
+                mul(_I, _A, _D);
+
+                if (buffer)
+                {
+                        (*buffer) << '(' << _rows << 'x' << _cols << ')';
+                        // p(m1, m2, _rows, _cols, *buffer);
+                }
+
+                bool retval = equals(_A, _D);
+
+                return retval;
+        }
+};
+
 int main(int, char **)
 {
-
         init();
         rnc::random::random_type seed = time(NULL);
         cout << "Seed=" << seed << endl;
@@ -106,7 +165,15 @@ int main(int, char **)
 
         typedef list<TestCase*> case_list;
         case_list cases;
-        FORALL_ij_square cases.push_back(new Bootstrap(5, *i, *j));
+        FORALL_ij_square cases.push_back(new Bootstrap(1, *i, *j));
+        FORALL_ij cases.push_back(new Identity(5, *i, *j));
+        FORALL_ij if (*i>1 && *j>1) cases.push_back(new RndEq(5, *i, *j));
+
+        Matrix ii(5, 5);
+        set_identity(ii);
+        p(ii, cout);
+        rand_matr(ii, &rnd_state);
+        p(ii, cout);
 
         int failed = 0;
         for (case_list::const_iterator i = cases.begin();
