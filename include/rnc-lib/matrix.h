@@ -26,6 +26,7 @@
 #include <rnc-lib/fq.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string>
 
 namespace rnc
 {
@@ -43,6 +44,10 @@ namespace matrix
                 size_t ncols;
                 bool cleanup;
 
+                Matrix(const Matrix &)
+                {
+                        throw std::string("Matrix object cannot be copied: not implemented.");
+                }
                 Matrix()
                         : rows(0),
                           nrows(0),

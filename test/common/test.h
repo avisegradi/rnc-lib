@@ -42,11 +42,9 @@ namespace test
         /// \brief Print a finite field element
         void p(const Element v, std::ostream& buffer = std::cout);
         /// \brief Print a matrix of size \c rows x \c cols
-        void p(const Matrix m, const int rows, const int cols,
-               std::ostream& buffer = std::cout);
+        void p(const Matrix &m, std::ostream& buffer = std::cout);
         /// \brief Print two matrices of the same size side-by-side
-        void p(const Matrix m1, const Matrix m2, const int rows, const int cols,
-               std::ostream& buffer = std::cout);
+        void p(const Matrix &m1, const Matrix &m2, std::ostream& buffer = std::cout);
 
         /// @}
 
