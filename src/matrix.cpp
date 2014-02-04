@@ -115,16 +115,16 @@ bool invert(const Matrix &m_in, Matrix &res) throw ()
         }
 
         //back-substitution
-        rd = res.rows + ncols - 1;
-        for (size_t i=0; i<nrows; ++i, --rd)
+        rd = res.rows + nrows - 1;
+        for (int i=nrows-1; i>=0; --i, --rd)
         {
                 Element *const res_i = *rd;
 
                 rm = rd - 1;
                 for (size_t r=0; r<i; ++r, --rm)
                 {
-                        Element *const m_r = *rm;
-                        Element *const res_r = *rd;
+                        Row const m_r = *rm;
+                        Row const res_r = *rd;
                         const Element h = RE(m_r,i);
                         RE(m_r,i) = 0;
 
