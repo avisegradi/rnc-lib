@@ -45,6 +45,8 @@ using namespace rnc;
 using namespace rnc::fq;
 using namespace rnc::matrix;
 
+#define O_SAVE (O_RDWR | O_CREAT)
+
 rnc::random::mt_state rnd_state;
 
 template <class T>
@@ -199,7 +201,7 @@ try
         BLOCK_SIZE = getint(argv[4]);
         const string mode = argv[5];
         const string id = argv[6];
-        const string &fout = fname + "_out_" + id;
+        const string &fout = fname + "_coded_" + id;
         const string &fdec = fname + "_decoded_" + id;
         const string &fmatr = fname + "_matr_" + id;
 
@@ -256,11 +258,11 @@ try
                 printf("tp=%s\n", throughput(fsize, begin, end));
 
                 {
-                        FileMap fm(fmatr, N*N*sizeof(Element));
+                        FileMap fm(fmatr, O_SAVE, N*N*sizeof(Element));
                         copy(m1, fm.addr());
                 }
                 {
-                        FileMap fm(fout, fsize);
+                        FileMap fm(fout, O_SAVE, fsize);
                         copy(mc, fm.addr());
                 }
 
@@ -323,7 +325,7 @@ try
                 printf("tp=%s\n", throughput(fsize, begin, end));
 
                 {
-                        FileMap fm(fdec, fsize);
+                        FileMap fm(fdec, O_SAVE, fsize);
                         copy(md, fm.addr());
                 }
         }
