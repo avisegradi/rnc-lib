@@ -48,8 +48,11 @@ public:
         {}
 
         bool equals(Matrix &m1, Matrix &m2) const {
-                const int rowsize = sizeof(Element) * _cols;
-                int i;
+                if (m1.nrows != m2.nrows || m1.ncols != m2.ncols)
+                        return false;
+
+                const size_t rowsize = sizeof(Element) * _cols;
+                size_t i;
                 Row *r1 = m1.rows, *r2 = m2.rows;
                 for (i=0; i<_rows; ++i, ++r1, ++r2)
                         if (0 != memcmp(*r1, *r2, rowsize)) return false;
