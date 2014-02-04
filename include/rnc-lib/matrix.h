@@ -24,6 +24,7 @@
 #define MATRIX_H
 
 #include <rnc-lib/fq.h>
+#include <rnc-lib/mt.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string>
@@ -202,7 +203,7 @@ namespace matrix
             @param rows Number of rows
             @param cols Number of columns
          */
-        void rand_matr(Matrix &m);
+        void rand_matr(Matrix &m, random::mt_state *rnd_state);
 
         /// @} @}
 }
