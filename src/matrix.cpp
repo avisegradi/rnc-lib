@@ -188,42 +188,40 @@ void mulrow_blk(gpointer bb, gpointer d)
         }
 }
 
-/*
-
 void mulrow_nonblk(gpointer row, gpointer d)
 {
-        const long i = (long)row-1;
-        const muldata *data = reinterpret_cast<muldata*>(d);
-        const int cols2=data->cols2;
-        const int cols1=data->cols1;
-        Matrix md = data->md;
-        const Matrix m1 = data->m1;
-        const Matrix m2 = data->m2;
+        const size_t i = (size_t)row-1;
+        muldata *data = reinterpret_cast<muldata*>(d);
+        const size_t cols2=data->m2.ncols;
+        const size_t cols1=data->m1.ncols;
+        Matrix &md = data->md;
+        const Matrix &m1 = data->m1;
+        const Matrix &m2 = data->m2;
 
-        int j, k;
+        size_t j, k;
 
         for (j=0; j<cols2; ++j)
         {
-                fq_t s = 0;
+                Element s = 0;
                 for (k=0; k<cols1; ++k) {
-                        s = add(s, fq::mul(E_(m1,i,k,cols1),
-                                           E_(m2, k,j,cols2)));
+                        s = add(s, fq::mul(E(m1,i,k),
+                                           E(m2,k,j)));
                 }
-                E_(md,i,j,cols2) = s;
+                E(md,i,j) = s;
         }
 }
 
-void pmul_blk(const Matrix m1, const Matrix m2, Matrix md,
-              const int rows1, const int cols1, int const cols2)
+void pmul_blk(const Matrix &m1, const Matrix &m2, Matrix &md)
 {
-        struct muldata d = { m1, m2, md, rows1, cols1, cols2 };
+        const size_t rows1 = m1.nrows;
+        struct muldata d = { m1, m2, md };
         GError *error = 0;
 
         GThreadPool *pool = g_thread_pool_new(mulrow_blk, &d,
                                               NCPUS, true, &error);
         checkGError("g_thread_pool_create", error);
 
-        for (long i=1; i<=rows1; i+=BLOCK_SIZE) {
+        for (size_t i=1; i<=rows1; i+=BLOCK_SIZE) {
                 g_thread_pool_push(pool, (void*)i, &error);
                 checkGError("g_thread_pool_push", error);
         }
@@ -231,17 +229,17 @@ void pmul_blk(const Matrix m1, const Matrix m2, Matrix md,
         g_thread_pool_free(pool, false, true);
 }
 
-void pmul_nonblk(const Matrix m1, const Matrix m2, Matrix md,
-              const int rows1, const int cols1, int const cols2)
+void pmul_nonblk(const Matrix &m1, const Matrix &m2, Matrix &md)
 {
-        struct muldata d = { m1, m2, md, rows1, cols1, cols2 };
+        const size_t rows1 = m1.nrows;
+        struct muldata d = { m1, m2, md };
         GError *error = 0;
 
         GThreadPool *pool = g_thread_pool_new(mulrow_nonblk, &d,
                                               NCPUS, true, &error);
         checkGError("g_thread_pool_create", error);
 
-        for (long i=1; i<=rows1; ++i) {
+        for (size_t i=1; i<=rows1; ++i) {
                 g_thread_pool_push(pool, (void*)i, &error);
                 checkGError("g_thread_pool_push", error);
         }
@@ -249,41 +247,50 @@ void pmul_nonblk(const Matrix m1, const Matrix m2, Matrix md,
         g_thread_pool_free(pool, false, true);
 }
 
-void pmul(const Matrix m1, const Matrix m2, Matrix md,
-         const int rows1, const int cols1, int const cols2)
+void pmul(const Matrix &m1, const Matrix &m2, Matrix &md)
 {
         if (NCPUS == 1)
         {
-                mul(m1, m2, md, rows1, cols1, cols2);
+                mul(m1, m2, md);
         }
         else
         {
                 if (BLOCK_SIZE == 1)
-                        pmul_nonblk(m1, m2, md, rows1, cols1, cols2);
+                        pmul_nonblk(m1, m2, md);
                 else
-                        pmul_blk(m1, m2, md, rows1, cols1, cols2);
+                        pmul_blk(m1, m2, md);
         }
 }
 
-void mul_nonblk(const Matrix m1, const Matrix m2, Matrix md,
-         const int rows1, const int cols1,int const cols2)
+
+void mul_nonblk(const Matrix &m1, const Matrix &m2, Matrix &md)
 {
-        for (int i=0; i<rows1; ++i)
-                for (int j=0; j<cols2; ++j)
+        const size_t rows1 = m1.nrows;
+        const size_t cols1 = m1.ncols;
+        const size_t cols2 = m2.ncols;
+        for (size_t i=0; i<rows1; ++i)
+                for (size_t j=0; j<cols2; ++j)
                 {
-                        fq_t s = 0;
-                        for (int k=0; k<cols1; ++k)
-                                addto_mul(s, E_(m1,i,k,cols1), E_(m2,k,j,cols2));
-                        E_(md,i,j,cols2) = s;
+                        Element s = 0;
+                        for (size_t k=0; k<cols1; ++k)
+                                addto_mul(s, E(m1,i,k), E(m2,k,j));
+                        E(md,i,j) = s;
                 }
 
 }
-void mul_blk(const Matrix m1, const Matrix m2, Matrix md,
-         const int rows1, const int cols1,int const cols2)
-{
-        int i, j, k, i0,j0,k0, li, lj, lk;
 
-        memset(md, 0, rows1*cols2*sizeof(fq_t));
+void mul_blk(const Matrix &m1, const Matrix &m2, Matrix &md)
+{
+        size_t i, j, k, i0,j0,k0, li, lj, lk;
+
+        const size_t cols1 = m1.ncols;
+        const size_t cols2 = m2.ncols;
+        const size_t rows1 = m1.nrows;
+
+        Row *r = md.rows;
+        const size_t rowsize = cols2 * sizeof(Element);
+        for (i=0; i<rows1; ++i, ++r)
+                memset(*r, 0, rowsize);
 
         for (i=0, li=BLOCK_SIZE; i<rows1; li+=BLOCK_SIZE, i+=BLOCK_SIZE) {
                 if (li > rows1) li=rows1;
@@ -295,43 +302,43 @@ void mul_blk(const Matrix m1, const Matrix m2, Matrix md,
 
                                 for (i0=i; i0<li; ++i0) {
                                         for (k0=k; k0<lk; ++k0) {
-                                                const fq_t e1 =  E_(m1, i0, k0, cols1);
+                                                const Element e1 =  E(m1, i0, k0);
                                                 for (j0=j; j0<lj; ++j0) {
-                                                        addto_mul(*A_(md, i0, j0, cols2), e1, E_(m2, k0, j0, cols2));
+                                                        addto_mul(*A(md, i0, j0),
+                                                                  e1,
+                                                                  E(m2, k0, j0));
                                                 }
                                         }
                                 }
                         }
                 }
         }
-
 }
 
 // (rows1 x cols1) * (cols1 x cols2) = (rows1 x cols2)
-void mul(const Matrix m1, const Matrix m2, Matrix md,
-         const int rows1, const int cols1,int const cols2)
+void mul(const Matrix &m1, const Matrix &m2, Matrix &md)
 {
         if (BLOCK_SIZE == 1)
-                mul_nonblk(m1, m2, md, rows1, cols1, cols2);
+                mul_nonblk(m1, m2, md);
         else
-                mul_blk(m1, m2, md, rows1, cols1, cols2);
+                mul_blk(m1, m2, md);
 }
 
-void rand_matr(Matrix m, const int rows, const int cols)
+void rand_matr(Matrix &m)
 {
+        CACHE_DIMS(m);
+
         random::mt_state rnd_state;
         random::init(&rnd_state, time(NULL));
 
-        int i, j;
-        Row *row;
-        Element *elem;
-        for (i=0, row=m; i<rows; ++i, ++row)
-                for (j=0, elem=*row; j<cols; ++j, ++elem)
+        Row *row = m.rows;
+        for (size_t i=0; i<nrows; ++i, ++row)
+        {
+                Element *elem = *row;
+                for (size_t j=0; j<ncols; ++j, ++elem)
                         *elem = random::generate_fq(&rnd_state);
+        }
 }
-*/
-
-
 
 }
 }
