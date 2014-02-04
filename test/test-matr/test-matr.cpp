@@ -75,7 +75,6 @@ public:
                         // p(m1, m2, _rows, _cols, *buffer);
                 }
 
-
                 bool retval = equals(m1, m2);
 
                 return retval;
@@ -105,7 +104,7 @@ int main(int, char **)
 
         int failed = 0;
         for (case_list::const_iterator i = cases.begin();
-             i!=cases.end(); i++)
+             i!=cases.end(); ++i)
         {
                 failed += (*i)->execute(cout);
         }

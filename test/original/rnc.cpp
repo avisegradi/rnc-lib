@@ -246,7 +246,7 @@ try
 
                 struct timeval begin, end;
                 gettimeofday(&begin, 0);
-                pmul(m1, mi, mc));
+                pmul(m1, mi, mc);
                 gettimeofday(&end, 0);
 
                 printf("matrgen=%s ", timediff(begin_gen, end_gen));
