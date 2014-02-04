@@ -37,8 +37,7 @@ namespace matrix
 
         typedef fq_t Element;
         typedef Element *Row;
-        class Matrix {
-        public:
+        struct Matrix {
                 Row *rows;
                 size_t nrows;
                 size_t ncols;
@@ -90,17 +89,6 @@ namespace matrix
 #define CACHE_DIMS(m)                 \
         const size_t nrows = m.nrows; \
         const size_t ncols = m.ncols;
-
-        class auto_matr_ptr {
-                Matrix *matr;
-                auto_matr_ptr(Matrix *matr) : matr(matr) {}
-                ~auto_matr_ptr()
-                {
-                        Row *row = matr->rows;
-                        for (int i = matr->nrows; i>0; --i, ++row)
-                                delete *row;
-                }
-        };
 
         /** \brief Number of threads to use.
 
