@@ -45,7 +45,7 @@ public:
                   _cols(cols)
         {}
 
-        bool equals(Matrix m1, Matrix m2) const {
+        bool equals(Matrix &m1, Matrix &m2) const {
                 const int rowsize = sizeof(Element) * _cols;
                 int i;
                 Row *r1 = m1.rows, *r2 = m2.rows;
