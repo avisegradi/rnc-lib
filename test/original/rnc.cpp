@@ -251,8 +251,14 @@ try
                 printf("t=%s ", timediff(begin, end));
                 printf("tp=%s\n", throughput(fsize, begin, end));
 
-// \todo        FileMap::save(m1, N*N*sizeof(fq_t), fmatr);
-// \todo        FileMap::save(mc, fsize, fout);
+                {
+                        FileMap fm(fmatr, N*N*sizeof(Element));
+                        copy(m1, fm.addr());
+                }
+                {
+                        FileMap fm(fout, fsize);
+                        copy(mc, fm.addr());
+                }
 
                 if (sing > 1)
                         printf("# Singular matrices generated: %d\n", sing-1);
@@ -312,7 +318,10 @@ try
                 printf("t=%s ", timediff(begin, end));
                 printf("tp=%s\n", throughput(fsize, begin, end));
 
-// \todo        FileMap::save(md, fsize, fdec);
+                {
+                        FileMap fm(fdec, fsize);
+                        copy(md, fm.addr());
+                }
         }
 
 __break:
