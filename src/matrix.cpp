@@ -147,11 +147,11 @@ bool invert(const Matrix &m_in, Matrix &res) throw ()
 typedef struct muldata
 {
         /// \brief Left-hand side matrix
-        const Matrix m1;
+        const Matrix &m1;
         /// \brief Right-hand side matrix
-        const Matrix m2;
+        const Matrix &m2;
         /// \brief Result address
-        Matrix md;
+        Matrix &md;
 } muldata;
 
 void mulrow_blk(gpointer bb, gpointer d)
