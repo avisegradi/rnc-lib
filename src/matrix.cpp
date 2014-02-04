@@ -121,7 +121,7 @@ bool invert(const Matrix &m_in, Matrix &res) throw ()
                 Element *const res_i = *rd;
 
                 rm = rd - 1;
-                for (size_t r=0; r<i; ++r, --rm)
+                for (int r=0; r<i; ++r, --rm)
                 {
                         Row const m_r = *rm;
                         Row const res_r = *rd;
