@@ -69,9 +69,9 @@ namespace matrix
                         Row *r = rows;
                         for (int i=nrows; i>0; --i, ++r)
                                 if (init0)
-                                        *r = reinterpret_cast<Row>(malloc(rowsize));
-                                else
                                         *r = new Element[ncols]();
+                                else
+                                        *r = reinterpret_cast<Row>(malloc(rowsize));
                 }
                 ~Matrix()
                 {
