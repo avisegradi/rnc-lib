@@ -301,6 +301,8 @@ try
                 }
                 gettimeofday(&end_inv, 0);
 
+                Matrix md(N, ncols);
+
                 struct timeval begin, end;
                 gettimeofday(&begin, 0);
                 pmul(minv, mi, md);
