@@ -38,12 +38,14 @@ using namespace rnc::fq;
 
 int main(int argc, char **argv)
 {
+        char const * const OUTFNAME = "random_numbers.txt";
+
         int n = N;
         if (argc>1)
                 n = atoi(argv[1]);
         if (!n) n = N;
 
-        FILE *f = fopen("random_numbers.txt", "w");
+        FILE *f = fopen(OUTFNAME, "w");
         if (!f) throw string("Can't open file 'random_numbers.txt' for writing.");
 
         rnc::random::mt_state state;
@@ -51,6 +53,8 @@ int main(int argc, char **argv)
         for (int i=0; i<n; ++i)
                 fprintf(f, "%f\n", rnc::random::generateP(&state));
         fclose(f);
+
+        printf("Written %d random numbers to '%s'\n", n, OUTFNAME);
 
         return 0;
 }
