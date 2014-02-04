@@ -73,6 +73,17 @@ void copy(const Matrix &m, Matrix &md) throw()
                 memcpy(*rowD, *row, rowsize);
 }
 
+void copy(const Matrix &m, Element* dest) throw()
+{
+        CACHE_DIMS(m);
+        const size_t rowsize = ncols*sizeof(Element);
+
+        Row *row = m.rows;
+        Element *d = dest;
+        for (size_t i=0; i<nrows; ++i, ++row, d+=ncols)
+                memcpy(d, *row, rowsize);
+}
+
 bool invert(const Matrix &m_in, Matrix &res) throw ()
 {
         CACHE_DIMS(m_in);
