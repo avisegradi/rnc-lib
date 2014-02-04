@@ -50,7 +50,7 @@ public:
                 int i;
                 Row *r1 = m1.rows, *r2 = m2.rows;
                 for (i=0; i<_rows; ++i, ++r1, ++r2)
-                        if (0 != memcmp(r1, r2, rowsize)) return false;
+                        if (0 != memcmp(*r1, *r2, rowsize)) return false;
                 return true;
         }
 };
