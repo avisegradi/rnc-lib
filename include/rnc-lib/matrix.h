@@ -37,25 +37,52 @@ namespace matrix
 
         typedef fq_t Element;
         typedef Element *Row;
-        struct Matrix {
+        class Matrix {
+        public:
                 Row *rows;
                 size_t nrows;
                 size_t ncols;
+                bool cleanup;
 
-                Matrix(size_t nrows, size_t ncols)
-                        : rows(new Row[nrows]),
+                Matrix()
+                        : rows(0),
+                          nrows(0),
+                          ncols(0)
+                {}
+                Matrix(Element *memarea, size_t nrows, size_t ncols)
+                        : rows(reinterpret_cast<Row*>(malloc(sizeof(Row)*nrows))),
                           nrows(nrows),
-                          ncols(ncols)
+                          ncols(ncols),
+                          cleanup(false)
                 {
                         Row *r = rows;
+                        Row rowstart = reinterpret_cast<Row>(memarea);
+                        for (int i=nrows; i>0; --i, ++r, rowstart += ncols)
+                                *r = rowstart;
+                }
+                Matrix(size_t nrows, size_t ncols, bool init0 = false)
+                        : rows(reinterpret_cast<Row*>(malloc(sizeof(Row)*nrows))),
+                          nrows(nrows),
+                          ncols(ncols),
+                          cleanup(true)
+                {
+                        const size_t rowsize = sizeof(Element)*ncols;
+                        Row *r = rows;
                         for (int i=nrows; i>0; --i, ++r)
-                                *r = new Element[ncols];
+                                if (init0)
+                                        *r = reinterpret_cast<Row>(malloc(rowsize));
+                                else
+                                        *r = new Element[ncols]();
                 }
                 ~Matrix()
                 {
-                        Row *r = rows;
-                        for (int i=nrows; i>0; --i, ++r)
-                                delete [] *r;;
+                        if (!rows) return;
+                        if (cleanup)
+                        {
+                                Row *r = rows;
+                                for (int i=nrows; i>0; --i, ++r)
+                                        delete [] *r;
+                        }
                         delete [] rows;
                 }
         };
@@ -103,7 +130,7 @@ namespace matrix
         /// @{
 
 /// \brief  Row address
-#define RA(m,r)   ((m.rows)+(r))
+#define RA(m,r)   (*((m.rows)+(r)))
 /// \brief  Row element
 #define RE(ra, c) (*((ra) + (c)))
 /// \brief  Address
@@ -120,9 +147,14 @@ namespace matrix
         void set_identity(Matrix &m) throw();
         /** \brief Copy a matrix
             @param m Matrix to be copied
-            @param md Destination address
+            @param md Destination matrix
          */
         void copy(const Matrix &m, Matrix &md) throw();
+        /** \brief Copy a matrix to a contiguous memory area
+            @param m Matrix to be copied
+            @param md Destination address
+         */
+        void copy(const Matrix &m, void* dest) throw();
         /** \brief Invert a matrix
 
             @param m_in Matrix to be inverted

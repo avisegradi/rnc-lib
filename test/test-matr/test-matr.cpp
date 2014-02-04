@@ -48,8 +48,8 @@ public:
         bool equals(Matrix m1, Matrix m2) const {
                 const int rowsize = sizeof(Element) * _cols;
                 int i;
-                Row *r1, *r2;
-                for (i=0, r1=m1, r2=m2; i<_rows; ++i, ++r1, ++r2)
+                Row *r1 = m1.rows, *r2 = m2.rows;
+                for (i=0; i<_rows; ++i, ++r1, ++r2)
                         if (0 != memcmp(r1, r2, rowsize)) return false;
                 return true;
         }
@@ -63,11 +63,11 @@ public:
 
         bool performTest(ostream *buffer) const
         {
-                Matrix m1 = create_matr(_rows, _cols);
-                Matrix m2 = create_matr(_rows, _cols);
+                Matrix m1(_rows, _cols);
+                Matrix m2(_rows, _cols);
 
-                set_identity(m1, _rows, _cols);
-                set_identity(m2, _rows, _cols);
+                set_identity(m1);
+                set_identity(m2);
 
                 if (buffer)
                 {
@@ -77,9 +77,6 @@ public:
 
 
                 bool retval = equals(m1, m2);
-
-                delete [] m1;
-                delete [] m2;
 
                 return retval;
         }

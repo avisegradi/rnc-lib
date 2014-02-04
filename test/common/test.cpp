@@ -43,7 +43,7 @@ fq::fq_t read(std::istream &)
 void p(const Element v, ostream& buffer)
 {
         /// \todo setw(4) <- setw (ifdef(Q256) ? 2 : 4)
-	buffer << hex << setfill('0') << setw(4) << (int)v;
+        buffer << hex << setfill('0') << setw(4) << (int)v;
 }
 
 void p(const Matrix &m, ostream& buffer)
@@ -51,11 +51,11 @@ void p(const Matrix &m, ostream& buffer)
         CACHE_DIMS(m);
 
         Row *row = m.rows;
-	for (int i=nrows; i>0; --i, ++row)
+        for (int i=nrows; i>0; --i, ++row)
         {
                 bool fcol = true;
-                Element *elem;
-		for (j=0, elem=*row; j<cols; ++j, ++elem)
+                Element *elem = *row;
+                for (size_t j=0; j<ncols; ++j, ++elem)
                 {
                         if (fcol) fcol=false;
                         else buffer << ' ';
@@ -65,18 +65,16 @@ void p(const Matrix &m, ostream& buffer)
                 buffer << endl;
         }
 }
-void p(const Matrix m1, const Matrix m2,
-       const int rows, const int cols, ostream& buffer)
+void p(const Matrix &m1, const Matrix &m2, ostream& buffer)
 {
-        int i, j;
-        Row *rowA, *rowB;
-        Element *elem;
-	for (i=0, rowA=m1, rowB=m2;
-             i<rows;
-             ++i, ++rowA, ++rowB)
+        CACHE_DIMS(m1);
+
+        Row *rowA = m1.rows, *rowB = m2.rows;
+        for (size_t i=0; i<nrows; ++i, ++rowA, ++rowB)
         {
                 bool fcol = true;
-		for (j=0, elem=*rowA; j<cols; ++j, ++elem)
+                Element *elem = *rowA;
+                for (size_t j=0; j<ncols; ++j, ++elem)
                 {
                         if (fcol) fcol=false;
                         else buffer << ' ';
@@ -84,18 +82,19 @@ void p(const Matrix m1, const Matrix m2,
                         p(*elem, buffer);
                 }
 
-		buffer << " | ";
-		fcol = true;
-                for (j=0, elem=*rowB; j<cols; ++j, ++elem)
-		{
-			if (fcol) fcol=false;
-			else buffer << ' ';
+                buffer << " | ";
+                fcol = true;
+                elem = *rowB;
+                for (size_t j=0; j<ncols; ++j, ++elem)
+                {
+                        if (fcol) fcol=false;
+                        else buffer << ' ';
 
-			p(*elem, buffer);
-		}
+                        p(*elem, buffer);
+                }
 
-		buffer << endl;
-	}
+                buffer << endl;
+        }
 }
 
 string TestCase::field_separator = "\t";
