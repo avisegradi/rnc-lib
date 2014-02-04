@@ -126,7 +126,7 @@ public:
         inline const string &path() const { return _path; }
 };
 
-typedef FileMap_G<fq_t> FileMap;
+typedef FileMap_G<Element> FileMap;
 
 void chkSystem(int retval)
 {
