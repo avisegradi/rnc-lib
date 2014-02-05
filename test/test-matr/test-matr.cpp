@@ -161,11 +161,8 @@ public:
                 rand_matr(_A, &rnd_state);
                 invert(_A, _Ai);
 
-                (*buffer) << '\n';
-                if (_rows <= 5) p(_A, _Ai, *buffer);
                 pmul(_A, _Ai, _I);
                 set_identity(_A);
-                if (_rows <= 5) p(_I, *buffer);
 
                 if (buffer)
                 {
@@ -179,6 +176,46 @@ public:
         }
 };
 
+class SparseMatrix : public Matrix_TestCase
+{
+        double _p;
+public:
+        SparseMatrix(size_t n, const int rows, const int cols, const double p)
+                : Matrix_TestCase("Sparse matrix (cnt(0) ~= p)", n, rows, cols), _p(p) {}
+
+        bool performTest(ostream *buffer) const
+        {
+                Matrix _P(_rows, _cols);
+
+                rand_matr(_P, _p, &rnd_state);
+
+                double sum = 0;
+                Row *row = _P.rows;
+                for (size_t i=0; i<_rows; ++i, ++row)
+                {
+                        unsigned int cnt0 = 0;
+                        Row const p_i = *row;
+                        for (size_t j=0; j<_cols; ++j)
+                        {
+                                if (!RE(p_i, j))
+                                        ++cnt0;
+                        }
+                        sum += (double(cnt0)/_cols);
+                }
+
+                if (buffer)
+                {
+                        (*buffer) << '(' << _rows << 'x' << _cols << "); p = " << _p << "; avg(#0) = " << 1-sum/_rows << "; DIFF = " << (_p - 1 + sum/_rows);
+                }
+
+
+                bool retval = true;
+
+                return retval;
+        }
+};
+
+
 int main(int, char **)
 {
         BLOCK_SIZE = 4;
@@ -191,11 +228,12 @@ int main(int, char **)
 
         cout << "Q=" << fq_size << endl;
 
-        const int rowcounts[] = {1, 5, 10, 100, 0};
-        const int colcounts[] = {1, 5, 10, 100, 0};
+        const int rowcounts[] = {1, 5, 10, 50, 100, 0};
+        const int colcounts[] = {1, 5, 10, 50, 100, 0};
+        const double ps[] = {0, 0.1, 1.0/3, 0.5, 0.75, 1, -1};
 #define FORALL_ij                                       \
-        for (int const * i = rowcounts; *i; i++)               \
-                for (int const * j = colcounts; *j; j++)
+        for (int const * i = rowcounts; *i; ++i)               \
+                for (int const * j = colcounts; *j; ++j)
 #define FORALL_ij_square                        \
         FORALL_ij if (*i == *j)
 
@@ -205,6 +243,10 @@ int main(int, char **)
         FORALL_ij cases.push_back(new Identity(5, *i, *j));
         FORALL_ij if (*i>1 && *j>1) cases.push_back(new RndEq(5, *i, *j));
         FORALL_ij_square cases.push_back(new Inversion(5, *i, *j));
+        FORALL_ij {
+                for (const double *P = ps; *P >= 0; ++P)
+                        cases.push_back(new SparseMatrix(5, *i, *j, *P));
+        }
 
         Matrix ii(5, 5);
         set_identity(ii);
