@@ -129,7 +129,6 @@ bool invert(const Matrix &m_in, Matrix &res) throw ()
         rm = m.rows + nrows - 1;
         for (int i=nrows-1; i>=0; --i, --rd, --rm)
         {
-                Row const m_i = *rm;
                 Row const res_i = *rd;
 
                 Row *rbd = rd - 1;
