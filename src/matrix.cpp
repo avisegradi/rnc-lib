@@ -85,8 +85,8 @@ bool invert(const Matrix &m_in, Matrix &res) throw ()
         Row *rd = res.rows;
         for (size_t i=0; i<nrows; ++i, ++rm, ++rd)
         {
-                Element *const m_i = *rm;
-                Element *const res_i = *rd;
+                Row const m_i = *rm;
+                Row const res_i = *rd;
 
                 //normalize row
                 const Element p = RE(m_i,i);
@@ -102,29 +102,32 @@ bool invert(const Matrix &m_in, Matrix &res) throw ()
                 Row *frd = rd+1;
                 for (size_t r=i+1; r<ncols; ++r, ++frm, ++frd)
                 {
-                        Element *const m_r = *frm;
-                        Element *const res_r = *frd;
+                        Row const m_r = *frm;
+                        Row const res_r = *frd;
                         const Element h = RE(m_r,i);
 
                         for (size_t c=0; c<ncols; ++c)
                         {
                                 if (c>=i) addto_mul(RE(m_r,c), RE(m_i,c), h);
-                                addto_mul(res_r[c], RE(res_i,c), h);
+                                addto_mul(RE(res_r, c), RE(res_i,c), h);
                         }
                 }
         }
 
         //back-substitution
         rd = res.rows + nrows - 1;
-        for (int i=nrows-1; i>=0; --i, --rd)
+        rm = m.rows + nrows - 1;
+        for (int i=nrows-1; i>=0; --i, --rd, --rm)
         {
-                Element *const res_i = *rd;
+                Row const m_i = *rm;
+                Row const res_i = *rd;
 
-                rm = rd - 1;
-                for (int r=0; r<i; ++r, --rm)
+                Row *rbd = rd - 1;
+                Row *rbm = rm - 1;
+                for (int r = i - 1; r>=0; --r, --rbd, --rbm)
                 {
-                        Row const m_r = *rm;
-                        Row const res_r = *rd;
+                        Row const res_r = *rbd;
+                        Row const m_r = *rbm;
                         const Element h = RE(m_r,i);
                         RE(m_r,i) = 0;
 
