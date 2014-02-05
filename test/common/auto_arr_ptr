@@ -45,6 +45,7 @@ public:
 	{
 		if (_ptr) delete [] _ptr;
 		_ptr = ptr;
+		return _ptr;
 	}
 };
 }

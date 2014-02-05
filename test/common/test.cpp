@@ -33,57 +33,68 @@ namespace rnc
 namespace test
 {
 
-fq::fq_t read(std::istream &is)
+using namespace rnc::matrix;
+
+fq::fq_t read(std::istream &)
 {
         return 0;
 }
 
-void p(const fq_t v, ostream& buffer)
+void p(const Element v, ostream& buffer)
 {
         /// \todo setw(4) <- setw (ifdef(Q256) ? 2 : 4)
-	buffer << hex << setfill('0') << setw(4) << (int)v;
+        buffer << hex << setfill('0') << setw(4) << (int)v;
 }
 
-void p(const fq_t *m, const int rows, const int cols, ostream& buffer)
+void p(const Matrix &m, ostream& buffer)
 {
-	for (int i=0; i<rows; ++i)
-	{
-		bool fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else buffer << ' ';
+        CACHE_DIMS(m);
 
-			p(E(m,i,j), buffer);
-		}
+        Row *row = m.rows;
+        for (int i=nrows; i>0; --i, ++row)
+        {
+                bool fcol = true;
+                Element *elem = *row;
+                for (size_t j=0; j<ncols; ++j, ++elem)
+                {
+                        if (fcol) fcol=false;
+                        else buffer << ' ';
+                        p(*elem, buffer);
+                }
 
-		buffer << endl;
-	}
+                buffer << endl;
+        }
 }
-void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols, ostream& buffer)
+void p(const Matrix &m1, const Matrix &m2, ostream& buffer)
 {
-	for (int i=0; i<rows; ++i)
-	{
-		bool fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else buffer << ' ';
+        CACHE_DIMS(m1);
 
-			p(E(m1,i,j), buffer);
-		}
-		buffer << " | ";
-		fcol = true;
-		for (int j=0; j<cols; ++j)
-		{
-			if (fcol) fcol=false;
-			else buffer << ' ';
+        Row *rowA = m1.rows, *rowB = m2.rows;
+        for (size_t i=0; i<nrows; ++i, ++rowA, ++rowB)
+        {
+                bool fcol = true;
+                Element *elem = *rowA;
+                for (size_t j=0; j<ncols; ++j, ++elem)
+                {
+                        if (fcol) fcol=false;
+                        else buffer << ' ';
 
-			p(E(m2,i,j), buffer);
-		}
+                        p(*elem, buffer);
+                }
 
-		buffer << endl;
-	}
+                buffer << " | ";
+                fcol = true;
+                elem = *rowB;
+                for (size_t j=0; j<ncols; ++j, ++elem)
+                {
+                        if (fcol) fcol=false;
+                        else buffer << ' ';
+
+                        p(*elem, buffer);
+                }
+
+                buffer << endl;
+        }
 }
 
 string TestCase::field_separator = "\t";
@@ -92,19 +103,23 @@ string TestCase::field_separator = "\t";
         : _name(__name), _repeat(__repeat)
 {}
 
-void TestCase::execute(std::ostream& buffer) const
+int TestCase::execute(std::ostream& buffer) const
 {
-        for (int i=1; i<=repeat(); i++)
+        int failed = 0;
+        for (size_t i=1; i<=repeat(); i++)
         {
                 buffer << name() << field_separator
                        << i << '/' << repeat() << field_separator;
                 ostringstream buf;
                 if (performTest(&buf))
                         buffer << "PASS";
-                else
+                else {
+                        ++failed;
                         buffer << "FAIL";
+                }
                 buffer << field_separator << buf.str() << endl;
         }
+        return failed;
 }
 
 }

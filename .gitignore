@@ -23,6 +23,7 @@
 test/original/rnc-test
 test/test-fq/rnc-test-fq
 test/test-matr/rnc-test-matr
+test/test-rnd/rnc-test-rnd
 
 # Dist tarball
 rnc-1.0.tar.gz

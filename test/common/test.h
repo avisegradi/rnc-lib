@@ -32,6 +32,7 @@ namespace rnc
 namespace test
 {
         using fq::fq_t;
+        using namespace matrix;
 
         /// \addtogroup test Unit test utility functions
         /// @{
@@ -39,13 +40,11 @@ namespace test
         /// @{
 
         /// \brief Print a finite field element
-        void p(const fq_t v, std::ostream& buffer = std::cout);
+        void p(const Element v, std::ostream& buffer = std::cout);
         /// \brief Print a matrix of size \c rows x \c cols
-        void p(const fq_t *m, const int rows, const int cols,
-               std::ostream& buffer = std::cout);
+        void p(const Matrix &m, std::ostream& buffer = std::cout);
         /// \brief Print two matrices of the same size side-by-side
-        void p(const fq_t *m1, const fq_t *m2, const int rows, const int cols,
-               std::ostream& buffer = std::cout);
+        void p(const Matrix &m1, const Matrix &m2, std::ostream& buffer = std::cout);
 
         /// @}
 
@@ -127,7 +126,7 @@ int main()
                 /** \brief The name of the test case */
                 const std::string& name() const { return _name; }
                 /** \brief Number of times to repeat when #execute is calledtes */
-                const size_t repeat() const { return _repeat; }
+                size_t repeat() const { return _repeat; }
 
                 /** \brief Generate output based on the result of #performTest
 
@@ -135,6 +134,7 @@ int main()
                     on its result.
 
                     \param buffer Output buffer
+                    \return Number of \e failed jobs
 
                     Example
                     \code
@@ -143,7 +143,7 @@ test_2_1	1/2	PASS
 test_2_1	2/2	FAIL	Details provided by performTest
                     \endcode
                  */
-                void execute(std::ostream& buffer) const;
+                int execute(std::ostream& buffer) const;
         };
 }
 }

@@ -89,5 +89,30 @@ const fq_t pow_table[fq_size] =
 
 const fq_t * const log_table = ltab;
 
+#include <stdlib.h>
+
+static unsigned int rand_seed;
+
+void init_random()
+{
+        init_random(time(NULL));
+}
+
+void init_random(unsigned int seed)
+{
+        rand_seed = seed;
+        srand(rand_seed);
+}
+
+unsigned int get_seed()
+{
+        return rand_seed;
+}
+
+fq_t random_element()
+{
+        return rand() % fq_size;
+}
+
 }
 }

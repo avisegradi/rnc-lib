@@ -24,6 +24,10 @@
 #define MATRIX_H
 
 #include <rnc-lib/fq.h>
+#include <rnc-lib/mt.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string>
 
 namespace rnc
 {
@@ -32,6 +36,65 @@ namespace rnc
 namespace matrix
 {
         using namespace fq;
+
+        typedef fq_t Element;
+        typedef Element *Row;
+        struct Matrix {
+                Row *rows;
+                size_t nrows;
+                size_t ncols;
+                bool cleanup;
+
+                Matrix(const Matrix &)
+                {
+                        throw std::string("Matrix object cannot be copied: not implemented.");
+                }
+                Matrix()
+                        : rows(0),
+                          nrows(0),
+                          ncols(0)
+                {}
+                Matrix(Element *memarea, size_t nrows, size_t ncols)
+                        : rows(reinterpret_cast<Row*>(malloc(sizeof(Row)*nrows))),
+                          nrows(nrows),
+                          ncols(ncols),
+                          cleanup(false)
+                {
+                        Row *r = rows;
+                        Row rowstart = reinterpret_cast<Row>(memarea);
+                        for (int i=nrows; i>0; --i, ++r, rowstart += ncols)
+                                *r = rowstart;
+                }
+                Matrix(size_t nrows, size_t ncols, bool init0 = false)
+                        : rows(reinterpret_cast<Row*>(malloc(sizeof(Row)*nrows))),
+                          nrows(nrows),
+                          ncols(ncols),
+                          cleanup(true)
+                {
+                        const size_t rowsize = sizeof(Element)*ncols;
+                        Row *r = rows;
+                        for (int i=nrows; i>0; --i, ++r)
+                                if (init0)
+                                        *r = new Element[ncols]();
+                                else
+                                        *r = reinterpret_cast<Row>(malloc(rowsize));
+                }
+                ~Matrix()
+                {
+                        if (!rows) return;
+                        if (cleanup)
+                        {
+                                Row *r = rows;
+                                for (int i=nrows; i>0; --i, ++r)
+                                        delete [] *r;
+                        }
+                        delete [] rows;
+                }
+        };
+
+#define CACHE_DIMS(m)                 \
+        const size_t nrows = m.nrows; \
+        const size_t ncols = m.ncols;
 
         /** \brief Number of threads to use.
 
@@ -60,23 +123,14 @@ namespace matrix
         /// changed \sa mul
         /// @{
 
-/// \brief  Row address (assuming the number of columns is \c cols)
-#define RA(m,r)   ((m)+(r)*cols)
+/// \brief  Row address
+#define RA(m,r)   (*((m.rows)+(r)))
 /// \brief  Row element
-#define RE(ra, c) (*(ra + (c)))
+#define RE(ra, c) (*((ra) + (c)))
 /// \brief  Address
 #define A(m,r,c) (RA(m,r)+(c))
 /// \brief  Element
 #define E(m,r,c) (*A(m,r,c))
-
-/// \brief  Row address
-#define RA_(m,r, cols)   ((m)+(r)*cols)
-/// \brief  Row element
-#define RE_(ra, c, cols) RE(ra, c)
-/// \brief  Address
-#define A_(m,r,c,cols) (RA_(m,r,cols)+(c))
-/// \brief  Element
-#define E_(m,r,c,cols) (*A_(m,r,c,cols))
 
         /// @}
 
@@ -84,12 +138,19 @@ namespace matrix
         /// @{
 
         /** \brief Initialize a matrix to identity. */
-        void set_identity(fq_t *m, const int rows, const int cols) throw();
+        void set_identity(Matrix &m) throw();
+        /** \brief Initialize a matrix with zeroes. */
+        void set_zero(Matrix &m) throw();
         /** \brief Copy a matrix
+            @param m Matrix to be copied
+            @param md Destination matrix
+         */
+        void copy(const Matrix &m, Matrix &md) throw();
+        /** \brief Copy a matrix to a contiguous memory area
             @param m Matrix to be copied
             @param md Destination address
          */
-        void copy(const fq_t *m, fq_t *md, const int rows, const int cols) throw();
+        void copy(const Matrix &m, Element* dest) throw();
         /** \brief Invert a matrix
 
             @param m_in Matrix to be inverted
@@ -97,8 +158,7 @@ namespace matrix
 
             \test A = mul(A, mul(A, invert(A))) | \f$\exists A^{-1}\f$
         */
-        bool invert(const fq_t *m_in, fq_t *res,
-                    const int rows, const int cols) throw ();
+        bool invert(const Matrix &m_in, Matrix &res) throw ();
 
         // (rows1 x cols1) * (cols1 x cols2) = (rows1 x cols2)
         /** \brief Matrix multiplication: \f$md:=m1*m2\f$
@@ -128,8 +188,7 @@ namespace matrix
             is passed as input (instead of storing the whole matrix in a single
             line).
          */
-        void mul(const fq_t *m1, const fq_t *m2, fq_t *md,
-                 const int rows1, const int cols1,int const cols2);
+        void mul(const Matrix &m1, const Matrix &m2, Matrix &md);
         /** \brief Parallelized version of #mul.
 
             If NCPUS is 1, this function will simply call #mul.
@@ -137,8 +196,7 @@ namespace matrix
             If NCPUS is greater than 1, this function will spawn NCPUS threads
             to perform the multiplication.
          */
-        void pmul(const fq_t *m1, const fq_t *m2, fq_t *md,
-                 const int rows1, const int cols1,int const cols2);
+        void pmul(const Matrix &m1, const Matrix &m2, Matrix &md);
 
         /** \brief Generates a random matrix.
 
@@ -147,7 +205,7 @@ namespace matrix
             @param rows Number of rows
             @param cols Number of columns
          */
-        void rand_matr(fq_t *m, const int rows, const int cols);
+        void rand_matr(Matrix &m, random::mt_state *rnd_state);
 
         /// @} @}
 }

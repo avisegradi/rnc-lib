@@ -24,13 +24,17 @@
 #include <rnc>
 #include <iostream>
 #include <list>
-#include <stdlib.h>
 
 using namespace std;
 using namespace rnc::test;
 using namespace rnc::fq;
 
-fq_t getrand() { return rand() % fq_size; }
+fq_t getrand_notnull()
+{
+        fq_t a;
+        do { a = random_element(); } while (a==0);
+        return a;
+}
 
 template <bool (*pt)(ostream*buffer)>
 class FQ_TestCase : public TestCase
@@ -46,43 +50,139 @@ public:
 
 #define new_TC(a, n) new FQ_TestCase<a>(#a, n)
 
+#define PRINT(a)                     \
+        if (buffer) {                \
+                (*buffer) << #a "="; \
+                p(a, *buffer);       \
+        }
+#define PRINT2(a, b)                            \
+        if (buffer) {                           \
+                (*buffer) << #a "=";            \
+                p(a, *buffer);                  \
+                (*buffer) << ", " #b "=";       \
+                p(b, *buffer);                  \
+        }
+#define PRINT3(a, b, c)                           \
+        if (buffer) {                           \
+                (*buffer) << #a "=";            \
+                p(a, *buffer);                  \
+                (*buffer) << ", " #b "=";       \
+                p(b, *buffer);                  \
+                (*buffer) << ", " #c "=";       \
+                p(c, *buffer);                  \
+        }
+
 bool inv_1(ostream *buffer)
 {
-        if (buffer)
-                (*buffer) << "log_table[1] = " << log_table[1];
+        PRINT(log_table[1]);
         return inv(1) == 1;
 }
 bool inv_2(ostream *buffer)
 {
-        fq_t a;
-        do { a = getrand(); } while (a==0);
-        if (buffer)
-        {
-                (*buffer) << "a=";
-                p(a, *buffer);
-        }
+        fq_t a = getrand_notnull();
+        PRINT(a);
         return 1 == mul(a, inv(a));
 }
-
-int main(int argc, char **argv)
+bool invert_1(ostream *buffer)
 {
-        srand(time(NULL));
+        fq_t a = getrand_notnull();
+        fq_t t = a;
+        invert(t);
+        PRINT(a);
+        return inv(a) == t;
+}
+
+bool mul_1(ostream *buffer)
+{
+        fq_t a = random_element();
+        PRINT(a);
+        return a == mul(1, a);
+}
+
+bool mul_2(ostream *buffer)
+{
+        fq_t a = getrand_notnull();
+        fq_t b = getrand_notnull();
+        PRINT2(a, b);
+        return mul(a,b) == mul(a, b);
+}
+
+bool mul_3(ostream *buffer)
+{
+        fq_t a = getrand_notnull();
+        fq_t b = getrand_notnull();
+        fq_t c = getrand_notnull();
+        PRINT3(a, b, c);
+        return mul(a, mul(b, c)) == mul(mul(a, b), c);
+}
+
+bool addto_1(ostream *buffer)
+{
+        fq_t a = random_element();
+        fq_t b = random_element();
+        fq_t t = a;
+        PRINT2(a, b);
+        addto(t, b);
+        return t == add(a,b);
+}
+
+bool addto_mul_1(ostream *buffer)
+{
+        fq_t d = random_element();
+        fq_t a = random_element();
+        fq_t b = random_element();
+        PRINT3(d, a, b);
+        fq_t t = d;
+        addto_mul(d, a, b);
+        return t == add(d, mul(a, b));
+}
+
+bool div_1(ostream *buffer)
+{
+        fq_t a = random_element();
+        fq_t b = getrand_notnull();
+        PRINT2(a, b);
+        return a == mul(b, div(a,b));
+}
+
+bool divby_1(ostream *buffer)
+{
+        fq_t a = random_element();
+        fq_t b = getrand_notnull();
+        PRINT2(a, b);
+        fq_t t = a;
+        divby(t, b);
+        return t == div(a,b);
+}
+
+int main(int, char **)
+{
+        init_random();
+        cout << "Seed=" << get_seed() << endl;
 
         init();
 
-        cout << fq_size << endl;
+        cout << "Q=" << fq_size << endl;
 
         typedef list<TestCase*> case_list;
         case_list cases;
         cases.push_back(new_TC(inv_1, 1));
         cases.push_back(new_TC(inv_2, 5));
+        cases.push_back(new_TC(invert_1, 5));
+        cases.push_back(new_TC(mul_1, 5));
+        cases.push_back(new_TC(mul_2, 5));
+        cases.push_back(new_TC(mul_3, 5));
+        cases.push_back(new_TC(addto_1, 5));
+        cases.push_back(new_TC(addto_mul_1, 5));
+        cases.push_back(new_TC(div_1, 5));
+        cases.push_back(new_TC(divby_1, 5));
 
+        int failed = 0;
         for (case_list::const_iterator i = cases.begin();
-             i!=cases.end(); i++)
+             i!=cases.end(); ++i)
         {
-                (*i)->execute(cout);
+                failed += (*i)->execute(cout);
         }
 
-        return 0;
+        return failed > 0;
 }
-
