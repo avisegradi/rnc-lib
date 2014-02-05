@@ -17,9 +17,7 @@
 
 /** \file
 
-    \brief Original application, which has been turned into a library.
-
-    \remark This code is retained for later use and testing.
+    \brief This application measures the efficiency of sparse coding
  */
 
 #include <filemap>
@@ -40,9 +38,9 @@ using namespace rnc::matrix;
 
 #define O_SAVE (O_RDWR | O_CREAT)
 
-rnc::random::mt_state rnd_state;
-
 typedef FileMap_G<Element> FileMap;
+
+rnc::random::mt_state rnd_state;
 
 void chkSystem(int retval)
 {

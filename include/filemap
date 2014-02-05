@@ -1,0 +1,122 @@
+/* -*- mode: c++; coding: utf-8-unix -*-
+ *
+ * Copyright 2013 MTA SZTAKI
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+/** \file
+
+    \brief FileMap is a wrapper class for POSIX memmap
+ */
+
+#ifndef __FILEMAP_
+#define __FILEMAP_
+
+#include <string>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <mkstr>
+
+namespace rnc {
+
+template <class T>
+class SetFinally
+{
+        T *_this;
+public:
+        SetFinally(T *_this) : _this(_this) {}
+        ~SetFinally() { if (_this) _this->release(); }
+        void cancel() { _this = 0; }
+};
+
+template <class T>
+class FileMap_G
+{
+        const std::string _path;
+        int _fd;
+        off_t _size;
+        T *_addr;
+public:
+        static void save(T* ptr, off_t length, const std::string &path)
+        {
+                FileMap_G<T> fm = FileMap_G<T>(path, O_RDWR|O_CREAT|O_TRUNC, length);
+                memcpy(fm.addr(), ptr, length);
+        }
+
+        FileMap_G(const std::string &path, int flags = O_RDONLY, off_t length = 0)
+                : _path(path), _fd(0),
+                  _size(length),
+                  _addr(0)
+        {
+                SetFinally<FileMap_G<T> > fin(this);
+
+                if (0 > (_fd = open(path.c_str(), flags, 0664)))
+                        throw std::string(MKStr() << "error: open('" << path << "'): "
+                                     << strerror(errno));
+
+                if (!_size)
+                {
+                        struct stat st;
+                        if (fstat(_fd, &st))
+                                throw std::string(MKStr() << "error: stat('"
+                                             << path << "'): "
+                                             << strerror(errno));
+                        _size = st.st_size;
+                }
+                else
+                {
+                        if (0 > lseek(_fd, _size-1, SEEK_SET))
+                                throw std::string(MKStr()
+                                             << "error: lseek('" << path << "'): "
+                                             << strerror(errno));
+                        if (1 != write(_fd, "", 1))
+                                throw std::string(MKStr()
+                                             << "error: write('" << path << "'): "
+                                             << strerror(errno));
+                }
+
+                int fl = ((flags & O_WRONLY) || (flags & O_RDWR))
+                        ? PROT_WRITE | PROT_READ
+                        : PROT_READ;
+                if (MAP_FAILED == (_addr = (T*)mmap(0, _size,
+                                                    fl,
+                                                    MAP_SHARED,
+                                                    _fd, 0)))
+                        throw std::string(MKStr()
+                                     << "error: map('" << path << "'): "
+                                     << strerror(errno));
+
+                fin.cancel();
+        }
+        ~FileMap_G() throw() { release();}
+        void release() throw()
+        {
+                if (_addr) { munmap(_addr, _size); _addr = 0; }
+                if (_fd) { close(_fd); _fd = 0; }
+        }
+
+        inline T *addr() const { return _addr; }
+        inline off_t size() const { return _size; }
+        inline const std::string &path() const { return _path; }
+};
+
+}
+
+#endif //__FILEMAP_
