@@ -380,7 +380,7 @@ void rand_vector(Row &m, size_t ncols, double p, random::mt_state *rnd_state)
 {
         Element *elem = m;
         for (size_t j=0; j<ncols; ++j, ++elem)
-                if (random::generate(rnd_state) < p)
+                if (random::generateP(rnd_state) < p)
                         *elem = random::generate_fq(rnd_state);
                 else
                         *elem = 0;
