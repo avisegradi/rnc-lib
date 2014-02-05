@@ -163,7 +163,7 @@ public:
 
                 (*buffer) << '\n';
                 if (_rows <= 5) p(_A, _Ai, *buffer);
-                mul(_A, _Ai, _I);
+                pmul(_A, _Ai, _I);
                 set_identity(_A);
                 if (_rows <= 5) p(_I, *buffer);
 
@@ -181,6 +181,9 @@ public:
 
 int main(int, char **)
 {
+        BLOCK_SIZE = 4;
+        NCPUS = 2;
+
         init();
         rnc::random::random_type seed = time(NULL);
         cout << "Seed=" << seed << endl;

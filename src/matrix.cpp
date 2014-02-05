@@ -190,9 +190,10 @@ void mulrow_blk(gpointer bb, gpointer d)
                         for (i0=i; i0<li; ++i0) {
                                 for (k0=k; k0<lk; ++k0) {
                                         const Element e1 = E(m1, i0, k0);
-
                                         for (j0=j; j0<lj; ++j0) {
-                                                addto_mul(*A(md, i0, j0), e1, E(m2, k0, j0));
+                                                addto_mul(E(md, i0, j0),
+                                                          e1,
+                                                          E(m2, k0, j0));
                                         }
                                 }
                         }
@@ -316,7 +317,7 @@ void mul_blk(const Matrix &m1, const Matrix &m2, Matrix &md)
                                         for (k0=k; k0<lk; ++k0) {
                                                 const Element e1 =  E(m1, i0, k0);
                                                 for (j0=j; j0<lj; ++j0) {
-                                                        addto_mul(*A(md, i0, j0),
+                                                        addto_mul(E(md, i0, j0),
                                                                   e1,
                                                                   E(m2, k0, j0));
                                                 }
