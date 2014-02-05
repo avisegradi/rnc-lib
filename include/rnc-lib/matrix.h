@@ -214,6 +214,23 @@ namespace matrix
          */
         void rand_matr(Matrix &m, random::mt_state *rnd_state);
 
+        /** \brief Generates a sparse coded random matrix.
+
+            @param m Output matrix
+            @param rows Number of rows
+            @param cols Number of columns
+            @param p    Probability of a coefficient being non-zero
+         */
+        void rand_matr(Matrix &m, double p, random::mt_state *rnd_state);
+
+        /** \brief Generates a sparse coded random vector.
+
+            @param r    Output row
+            @param cols Number of columns
+            @param p    Probability of a coefficient being non-zero
+         */
+        void rand_vector(Row &m, size_t ncols, double p, random::mt_state *rnd_state);
+
         /// @} @}
 }
 }
