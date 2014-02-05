@@ -62,6 +62,18 @@ void set_identity(Matrix &m) throw()
         }
 }
 
+void set_zero(Matrix &m) throw()
+{
+        CACHE_DIMS(m);
+        const size_t rowsize = ncols * sizeof(Element);
+
+        Row *row = m.rows;
+        for (size_t i=0; i<nrows; ++i, ++row)
+        {
+                memset(*row, 0, rowsize);
+        }
+}
+
 void copy(const Matrix &m, Matrix &md) throw()
 {
         CACHE_DIMS(m);

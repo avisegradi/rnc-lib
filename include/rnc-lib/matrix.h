@@ -139,6 +139,8 @@ namespace matrix
 
         /** \brief Initialize a matrix to identity. */
         void set_identity(Matrix &m) throw();
+        /** \brief Initialize a matrix with zeroes. */
+        void set_zero(Matrix &m) throw();
         /** \brief Copy a matrix
             @param m Matrix to be copied
             @param md Destination matrix
