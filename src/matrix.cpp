@@ -246,6 +246,8 @@ void pmul_blk(const Matrix &m1, const Matrix &m2, Matrix &md)
                                               NCPUS, true, &error);
         checkGError("g_thread_pool_create", error);
 
+        set_zero(md);
+
         for (size_t i=1; i<=rows1; i+=BLOCK_SIZE) {
                 g_thread_pool_push(pool, (void*)i, &error);
                 checkGError("g_thread_pool_push", error);
@@ -263,6 +265,8 @@ void pmul_nonblk(const Matrix &m1, const Matrix &m2, Matrix &md)
         GThreadPool *pool = g_thread_pool_new(mulrow_nonblk, &d,
                                               NCPUS, true, &error);
         checkGError("g_thread_pool_create", error);
+
+        set_zero(md);
 
         for (size_t i=1; i<=rows1; ++i) {
                 g_thread_pool_push(pool, (void*)i, &error);
