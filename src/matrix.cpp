@@ -366,5 +366,25 @@ void rand_matr(Matrix &m, random::mt_state *rnd_state)
         }
 }
 
+void rand_matr(Matrix &m, double p, random::mt_state *rnd_state)
+{
+        CACHE_DIMS(m);
+
+        Row *row = m.rows;
+        for (size_t i=0; i<nrows; ++i, ++row)
+                rand_vector(*row, ncols, p, rnd_state);
+
+}
+
+void rand_vector(Row &m, size_t ncols, double p, random::mt_state *rnd_state)
+{
+        Element *elem = m;
+        for (size_t j=0; j<ncols; ++j, ++elem)
+                if (random::generate(rnd_state) < p)
+                        *elem = random::generate_fq(rnd_state);
+                else
+                        *elem = 0;
+}
+
 }
 }
