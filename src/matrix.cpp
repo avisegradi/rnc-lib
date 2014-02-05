@@ -202,6 +202,7 @@ void mulrow_blk(gpointer bb, gpointer d)
                         for (i0=i; i0<li; ++i0) {
                                 for (k0=k; k0<lk; ++k0) {
                                         const Element e1 = E(m1, i0, k0);
+                                        if (!e1) continue;
                                         for (j0=j; j0<lj; ++j0) {
                                                 addto_mul(E(md, i0, j0),
                                                           e1,
@@ -332,6 +333,7 @@ void mul_blk(const Matrix &m1, const Matrix &m2, Matrix &md)
                                 for (i0=i; i0<li; ++i0) {
                                         for (k0=k; k0<lk; ++k0) {
                                                 const Element e1 =  E(m1, i0, k0);
+                                                if (!e1) continue;
                                                 for (j0=j; j0<lj; ++j0) {
                                                         addto_mul(E(md, i0, j0),
                                                                   e1,
