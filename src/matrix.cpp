@@ -202,6 +202,7 @@ void mulrow_blk(gpointer bb, gpointer d)
                         for (i0=i; i0<li; ++i0) {
                                 for (k0=k; k0<lk; ++k0) {
                                         const Element e1 = E(m1, i0, k0);
+                                        if (!e1) continue;
                                         for (j0=j; j0<lj; ++j0) {
                                                 addto_mul(E(md, i0, j0),
                                                           e1,
@@ -332,6 +333,7 @@ void mul_blk(const Matrix &m1, const Matrix &m2, Matrix &md)
                                 for (i0=i; i0<li; ++i0) {
                                         for (k0=k; k0<lk; ++k0) {
                                                 const Element e1 =  E(m1, i0, k0);
+                                                if (!e1) continue;
                                                 for (j0=j; j0<lj; ++j0) {
                                                         addto_mul(E(md, i0, j0),
                                                                   e1,
@@ -364,6 +366,26 @@ void rand_matr(Matrix &m, random::mt_state *rnd_state)
                 for (size_t j=0; j<ncols; ++j, ++elem)
                         *elem = random::generate_fq(rnd_state);
         }
+}
+
+void rand_matr(Matrix &m, double p, random::mt_state *rnd_state)
+{
+        CACHE_DIMS(m);
+
+        Row *row = m.rows;
+        for (size_t i=0; i<nrows; ++i, ++row)
+                rand_vector(*row, ncols, p, rnd_state);
+
+}
+
+void rand_vector(Row &m, size_t ncols, double p, random::mt_state *rnd_state)
+{
+        Element *elem = m;
+        for (size_t j=0; j<ncols; ++j, ++elem)
+                if (random::generateP(rnd_state) < p)
+                        *elem = random::generate_fq(rnd_state);
+                else
+                        *elem = 0;
 }
 
 }

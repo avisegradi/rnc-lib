@@ -17,9 +17,7 @@
 
 /** \file
 
-    \brief Original application, which has been turned into a library.
-
-    \remark This code is retained for later use and testing.
+    \brief This application measures the efficiency of sparse coding
  */
 
 #include <filemap>
@@ -40,9 +38,9 @@ using namespace rnc::matrix;
 
 #define O_SAVE (O_RDWR | O_CREAT)
 
-rnc::random::mt_state rnd_state;
-
 typedef FileMap_G<Element> FileMap;
+
+rnc::random::mt_state rnd_state;
 
 void chkSystem(int retval)
 {
@@ -57,6 +55,14 @@ int getint(string str)
 {
         stringstream ss(str);
         int i;
+        ss >> i;
+        return i;
+}
+
+double getdouble(string str)
+{
+        stringstream ss(str);
+        double i;
         ss >> i;
         return i;
 }
@@ -105,14 +111,15 @@ try
 
         if (argc < 7)
                 throw string(MKStr() << "usage: " << argv[0] <<
-                             " <input filename> <N> <ncpus> <blocksize> <mode> <id>");
+                             " <input filename> <N> <p> <ncpus> <blocksize> <mode> <id>");
 
         const string fname = argv[1];
         const int N = getint(argv[2]);
-        NCPUS = getint(argv[3]);
-        BLOCK_SIZE = getint(argv[4]);
-        const string mode = argv[5];
-        const string id = argv[6];
+        const double p = getdouble(argv[3]);
+        NCPUS = getint(argv[4]);
+        BLOCK_SIZE = getint(argv[5]);
+        const string mode = argv[6];
+        const string id = argv[7];
         const string &fout = fname + "_coded_" + id;
         const string &fdec = fname + "_decoded_" + id;
         const string &fmatr = fname + "_matr_" + id;
@@ -137,7 +144,7 @@ try
                         gettimeofday(&begin_gen, 0);
                         do {
                                 ++sing;
-                                rand_matr(m1, &rnd_state);
+                                rand_matr(m1, p, &rnd_state);
                         } while (!invert(m1, minv));
                         gettimeofday(&end_gen, 0);
                 }

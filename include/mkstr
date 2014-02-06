@@ -20,10 +20,10 @@
     \brief Stringbuilder class
 */
 
-#include <sstream>
-
 #ifndef __MKSTR_
 #define __MKSTR_
+
+#include <sstream>
 
 namespace rnc {
 
