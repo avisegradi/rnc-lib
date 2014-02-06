@@ -60,7 +60,6 @@ namespace fq
 #define fq_size 256
 #define fq_groupsize 255
 #else
-#pragma message ( "Using 16 bit finite field (Q65536)" )
         typedef uint16_t fq_t;
 #define fq_size 65536
 #define fq_groupsize 65535
