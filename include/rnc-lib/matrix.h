@@ -54,6 +54,13 @@ namespace matrix
                           nrows(0),
                           ncols(0)
                 {}
+                Matrix(Row *rowlist, size_t nrows, size_t ncols, bool cleanup = false)
+                        : rows(rowlist),
+                          nrows(nrows),
+                          ncols(ncols),
+                          cleanup(cleanup)
+                {
+                }
                 Matrix(Element *memarea, size_t nrows, size_t ncols)
                         : rows(reinterpret_cast<Row*>(malloc(sizeof(Row)*nrows))),
                           nrows(nrows),
