@@ -37,45 +37,45 @@ static fq_t ltab[fq_size];
 
 void init()
 {
-#pragma message "fq::init is OBSOLETE"
+#pragma warning "fq::init is OBSOLETE"
 /// \todo Obsolete this function. logtable should be calculated off-line;
 /// testing should be externalized.
 
-	for (int i=0; i<fq_size-1; i++)
-		ltab[pow_table[i]] = i;
+        for (int i=0; i<fq_size-1; i++)
+                ltab[pow_table[i]] = i;
 
 #ifdef VERIFY_FQ
-	for (int i=0; i<fq_size;i++)
-		for (int j=0;j<fq_size;j++)
-		{
-			if ((i==0 || j==0) && mul(i,j)!=0) {
-				throw string(MKStr() << "Multiplication is "
-					     << "inconsistent ("
-					     << hex << i
-					     << " * " << j << ")="
-					     << (int)mul(i, j));
-			}
-			else if (i==1 && mul(i, j) != j) {
-				throw string(MKStr() << "Multiplication is "
-					     << "inconsistent ("
-					     << hex << i
-					     << " * " << j << ")="
-					     << (int)mul(i, j));
-			}
-			else if (j!=0 && mul(j, div(i, j)) != i)
-			{
-				throw string(MKStr() << "Multiplication is "
-					     << "inconsistent ("
-					     << hex << j
-					     << " * (" << i << "/ " << j << "))="
-					     << (int)mul(j, div(i, j)));
-			}
+        for (int i=0; i<fq_size;i++)
+                for (int j=0;j<fq_size;j++)
+                {
+                        if ((i==0 || j==0) && mul(i,j)!=0) {
+                                throw string(MKStr() << "Multiplication is "
+                                             << "inconsistent ("
+                                             << hex << i
+                                             << " * " << j << ")="
+                                             << (int)mul(i, j));
+                        }
+                        else if (i==1 && mul(i, j) != j) {
+                                throw string(MKStr() << "Multiplication is "
+                                             << "inconsistent ("
+                                             << hex << i
+                                             << " * " << j << ")="
+                                             << (int)mul(i, j));
+                        }
+                        else if (j!=0 && mul(j, div(i, j)) != i)
+                        {
+                                throw string(MKStr() << "Multiplication is "
+                                             << "inconsistent ("
+                                             << hex << j
+                                             << " * (" << i << "/ " << j << "))="
+                                             << (int)mul(j, div(i, j)));
+                        }
 
-			if (mul(i,j) != mul(j,i))
-				throw string(MKStr() << "Multiplication is not "
-					     << "not commutative ("
-					     << hex << i << ", " << j << ')');
-		}
+                        if (mul(i,j) != mul(j,i))
+                                throw string(MKStr() << "Multiplication is not "
+                                             << "not commutative ("
+                                             << hex << i << ", " << j << ')');
+                }
 #endif
 }
 
