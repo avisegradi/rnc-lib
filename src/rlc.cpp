@@ -68,9 +68,20 @@ void BlockList::drop(size_t index, bool cleanup) throw (std::range_error)
         --_count;
 }
 
-BlockList File::block_list() const
+BlockList File::block_list(Row coefficients[]) const
 {
-        BlockList bl(_data_size / _ncols);
+        size_t nrows = _data_size / _ncols;
+        BlockList bl(nrows, true);
+
+        for (size_t i = 0; i<nrows; ++i)
+        {
+                Block *blk = new Block();
+                blk->coefficients = coefficients[i];
+                blk->data = _data + i*_ncols;
+                blk->coeff_count  = nrows;
+                blk->block_length = _ncols;
+                bl.add(blk);
+        }
 
         return bl;
 }

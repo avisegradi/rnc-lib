@@ -76,7 +76,7 @@ namespace coding
                 inline Element *data() const { return _data; }
                 inline operator Element*() const { return _data; }
                 void save_data(const std::string &path);
-                BlockList block_list() const;
+                BlockList block_list(Row coefficients[]) const;
         };
 
 }
