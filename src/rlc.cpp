@@ -68,6 +68,31 @@ void BlockList::drop(size_t index, bool cleanup) throw (std::range_error)
         --_count;
 }
 
+Matrix *BlockList::to_matrix(ToMatrixMode mode) const
+{
+        Row *rows = new Row[_count];
+
+        size_t ncols = 0;
+        Block **b = _blocklist;
+        Row *r = rows;
+
+        for (size_t i = 0; i<_count; ++i, ++b, ++r)
+        {
+                if (i == 0)
+                {
+                        ncols = mode==Coefficients
+                                ? (*b)->coeff_count
+                                : (*b)->block_length;
+                }
+
+                *r = mode==Coefficients
+                        ? (*b)->coefficients
+                        : (*b)->data;
+        }
+
+        return new Matrix(rows, _count, ncols);
+}
+
 BlockList File::block_list(Row coefficients[]) const
 {
         size_t nrows = _data_size / _ncols;

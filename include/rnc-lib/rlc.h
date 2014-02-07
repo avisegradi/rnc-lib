@@ -59,6 +59,13 @@ namespace coding
                 inline size_t count() const { return _count; }
                 inline size_t capacity() const { return _capacity; }
                 inline Block** blocks() const { return _blocklist; }
+
+                enum ToMatrixMode {
+                        Coefficients,
+                        Data
+                };
+
+                Matrix *to_matrix(ToMatrixMode mode) const;
         };
 
         class File
