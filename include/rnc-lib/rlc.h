@@ -26,6 +26,7 @@
 #include <rnc-lib/fq.h>
 #include <rnc-lib/matrix.h>
 #include <string>
+#include <stdexcept>
 
 namespace rnc
 {
@@ -45,13 +46,19 @@ namespace coding
 
         class BlockList
         {
+                bool _cleanup;
                 size_t _count;
                 size_t _capacity;
                 Block **_blocklist;
         public:
-                BlockList(size_t start_size = 1);
+                BlockList(size_t start_size = 1, bool _cleanup = false);
+                ~BlockList();
 
                 void add(Block *blk);
+                void drop(size_t index, bool cleanup = false) throw (std::range_error);
+                inline size_t count() const { return _count; }
+                inline size_t capacity() const { return _capacity; }
+                inline Block** blocks() const { return _blocklist; }
         };
 
         class File

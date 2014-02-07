@@ -22,28 +22,50 @@
 
 #include <rnc-lib/rlc.h>
 #include <filemap>
+#include <string.h>
 
-namespace rnc
-{
-namespace coding
-{
+#define NS_BEGIN(a) namespace a {
+#define NS_END(a)   }
 
-BlockList::BlockList(size_t start_size)
-        : _count(0),
-          _capacity(start_size),
-          _blocklist(static_cast<Block**>(malloc(_capacity*sizeof(Block*))))
+NS_BEGIN(rnc)
+NS_BEGIN(coding)
+
+BlockList::BlockList(size_t start_size, bool cleanup)
+      : _cleanup(cleanup),
+        _count(0),
+        _capacity(start_size),
+        _blocklist(static_cast<Block**>(malloc(_capacity*sizeof(Block*))))
 {
+}
+
+BlockList::~BlockList()
+{
+        if (_cleanup)
+                for (size_t i = 0; i<_count; i++)
+                        delete _blocklist[i];
+        free(_blocklist);
 }
 
 void BlockList::add(Block* blk)
 {
         if (_count == _capacity)
         {
-                _capacity *= 2;
+                _capacity <<= 1;
                 _blocklist = static_cast<Block**>(
                         realloc(_blocklist, _capacity*sizeof(Block*)));
         }
         _blocklist[_count++] = blk;
+}
+
+void BlockList::drop(size_t index, bool cleanup) throw (std::range_error)
+{
+        if (index >= _count) throw std::range_error("drop: index out of range");
+
+        if (cleanup)
+                delete _blocklist[index];
+
+        memmove(_blocklist+index, _blocklist+index+1, (_count-index)*sizeof(Block));
+        --_count;
 }
 
 BlockList File::block_list() const
@@ -86,5 +108,5 @@ void File::save_data(const std::string &path)
         memcpy(outfile.addr(), _data, _file_size);
 }
 
-}
-}
+NS_END(coding)
+NS_END(rnc)
