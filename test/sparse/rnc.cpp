@@ -20,23 +20,22 @@
     \brief This application measures the efficiency of sparse coding
  */
 
-#include <filemap>
 #include <glib.h>
 #include <rnc>
+#include <rnc-lib/rlc.h>
 #include <iostream>
 #include <time.h>
 #include <exception>
 #include <stdlib.h>
+#include <stdio.h>
 #include <mkstr>
 #include <auto_arr_ptr>
 #include <sys/time.h>
 
 using namespace std;
 using namespace rnc;
-using namespace rnc::fq;
+using namespace rnc::coding;
 using namespace rnc::matrix;
-
-typedef FileMap_G<Element> FileMap;
 
 rnc::random::mt_state rnd_state;
 
@@ -109,27 +108,29 @@ try
 
         if (argc < 7)
                 throw string(MKStr() << "usage: " << argv[0] <<
-                             " <input filename> <N> <p> <ncpus> <blocksize> <mode> <id>");
+                             " <input filename> <N : block count> "
+                             "<A : sparse coding factor> <R : redundancy target> "
+                             "<M : number of clients> <id>");
 
         const string fname = argv[1];
         const int N = getint(argv[2]);
-        const double p = getdouble(argv[3]);
-        NCPUS = getint(argv[4]);
-        BLOCK_SIZE = getint(argv[5]);
-        const string mode = argv[6];
-        const string id = argv[7];
-        const string &fout = fname + "_coded_" + id;
-        const string &fdec = fname + "_decoded_" + id;
-        const string &fmatr = fname + "_matr_" + id;
+        const double A = getdouble(argv[3]);
+        const int R = getint(argv[4]);
+        const int M = getint(argv[5]);
+        const int id = getint(argv[6]);
 
-        if (!(mode == "c" || mode =="d"))
-                throw string("Invalid mode specified.");
+        printf("%02d MEM file=%s q=%d mode=sim N=%d A=%f R=%d M=%d\n",
+               id, fname.c_str(), fq_size, N, A, R, M);
 
-        if (mode == "c")
-        {
-                printf("MEM file=%s mode=c q=%d N=%d CPUs=%d BS=%d ",
-                       fname.c_str(), fq_size, N, NCPUS, BLOCK_SIZE);
+        File infile(fname, N);
 
+        Matrix identity(N, N);
+        set_identity(identity);
+        BlockList blocks = infile.block_list(identity.rows);
+
+
+
+        /*
                 off_t fsize;
                 Matrix m1(N, N);
                 auto_arr_ptr<Element> mi_data;
@@ -250,6 +251,7 @@ try
 __break:
         if (singular)
                 throw string("Generated matrix was singular.");
+        */
 
         return 0;
 }

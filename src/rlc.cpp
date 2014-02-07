@@ -86,22 +86,26 @@ BlockList File::block_list(Row coefficients[]) const
         return bl;
 }
 
-File::File(const std::string &path, const size_t ncols)
+File::File(const std::string &path, const size_t nrows)
         : _data(0),
           _path(path),
           _padded(false),
-          _ncols(ncols)
+          _nrows(nrows)
 {
         FileMap_G<Element> fm(path);
 
         _file_size = fm.size();
         size_t _elem_count = _file_size / sizeof(Element);
-        if (_elem_count * sizeof(Element) < _file_size)
+        const size_t mod = _elem_count % _nrows;
+        if (mod)
         {
-                _elem_count += ncols;
+                _elem_count += _nrows - mod;
                 _padded = true;
         }
+        _ncols = _elem_count / _nrows;
+
         _data_size = _elem_count * sizeof(Element);
+
         _data = reinterpret_cast<Element*>(malloc(_data_size));
         memcpy(_data, fm.addr(), _file_size);
         if (_padded)

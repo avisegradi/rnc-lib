@@ -68,15 +68,18 @@ namespace coding
                 size_t _data_size;
                 std::string _path;
                 bool _padded;
+                size_t _nrows;
                 size_t _ncols;
         public:
-                File(const std::string &path, const size_t ncols);
+                File(const std::string &path, const size_t nrows);
                 ~File();
 
                 inline Element *data() const { return _data; }
                 inline operator Element*() const { return _data; }
                 void save_data(const std::string &path);
                 BlockList block_list(Row coefficients[]) const;
+                inline size_t ncols() const { return _ncols; }
+                inline size_t nrows() const { return _nrows; }
         };
 
 }
