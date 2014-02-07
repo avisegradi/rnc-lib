@@ -95,15 +95,14 @@ Matrix *BlockList::to_matrix(ToMatrixMode mode) const
 
 BlockList File::block_list(Row coefficients[]) const
 {
-        size_t nrows = _data_size / _ncols;
-        BlockList bl(nrows, true);
+        BlockList bl(_nrows, true);
 
-        for (size_t i = 0; i<nrows; ++i)
+        for (size_t i = 0; i<_nrows; ++i)
         {
                 Block *blk = new Block();
                 blk->coefficients = coefficients[i];
                 blk->data = _data + i*_ncols;
-                blk->coeff_count  = nrows;
+                blk->coeff_count  = _nrows;
                 blk->block_length = _ncols;
                 bl.add(blk);
         }
