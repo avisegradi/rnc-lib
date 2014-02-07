@@ -36,6 +36,8 @@
 
 namespace rnc {
 
+#define O_SAVE (O_RDWR | O_CREAT | O_TRUNC)
+
 template <class T>
 class SetFinally
 {

@@ -38,8 +38,6 @@ using namespace rnc;
 using namespace rnc::fq;
 using namespace rnc::matrix;
 
-#define O_SAVE (O_RDWR | O_CREAT)
-
 rnc::random::mt_state rnd_state;
 
 typedef FileMap_G<Element> FileMap;
