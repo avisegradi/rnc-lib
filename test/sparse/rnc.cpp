@@ -30,12 +30,15 @@
 #include <stdio.h>
 #include <mkstr>
 #include <auto_arr_ptr>
+#include <memory>
 #include <sys/time.h>
+#include <test.h>
 
 using namespace std;
 using namespace rnc;
 using namespace rnc::coding;
 using namespace rnc::matrix;
+using namespace rnc::test;
 
 rnc::random::mt_state rnd_state;
 
@@ -124,11 +127,20 @@ try
 
         File infile(fname, N);
 
+        Matrix orig(infile.data(), infile.nrows(), infile.ncols());
         Matrix identity(N, N);
         set_identity(identity);
         BlockList blocks = infile.block_list(identity.rows);
 
+        printf("block count: %lu\n", blocks.count());
 
+        auto_ptr<Matrix> C(blocks.to_matrix(BlockList::Coefficients));
+        auto_ptr<Matrix> D(blocks.to_matrix(BlockList::Data));
+
+        printf("C: %lu x %lu\n", C->nrows, C->ncols);
+        printf("D: %lu x %lu\n", D->nrows, D->ncols);
+        p(orig);
+        p(*C, *D, cout);
 
         /*
                 off_t fsize;
