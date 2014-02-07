@@ -54,8 +54,23 @@ namespace coding
                 void add(Block *blk);
         };
 
-        Element *load_file(const std::string &path);
+        class File
+        {
+                Element *_data;
+                size_t _file_size;
+                size_t _data_size;
+                std::string _path;
+                bool _padded;
+                size_t _ncols;
+        public:
+                File(const std::string &path, const size_t ncols);
+                ~File();
 
+                inline Element *data() const { return _data; }
+                inline operator Element*() const { return _data; }
+                void save_data(const std::string &path);
+                BlockList block_list() const;
+        };
 
 }
 }

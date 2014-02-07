@@ -21,6 +21,7 @@
  */
 
 #include <rnc-lib/rlc.h>
+#include <filemap>
 
 namespace rnc
 {
@@ -50,6 +51,39 @@ BlockList File::block_list() const
         BlockList bl(_data_size / _ncols);
 
         return bl;
+}
+
+File::File(const std::string &path, const size_t ncols)
+        : _data(0),
+          _path(path),
+          _padded(false),
+          _ncols(ncols)
+{
+        FileMap_G<Element> fm(path);
+
+        _file_size = fm.size();
+        size_t _elem_count = _file_size / sizeof(Element);
+        if (_elem_count * sizeof(Element) < _file_size)
+        {
+                _elem_count += ncols;
+                _padded = true;
+        }
+        _data_size = _elem_count * sizeof(Element);
+        _data = reinterpret_cast<Element*>(malloc(_data_size));
+        memcpy(_data, fm.addr(), _file_size);
+        if (_padded)
+                memset(_data + _file_size, 0, _data_size - _file_size);
+}
+File::~File()
+{
+        if (_data)
+                free(_data);
+}
+
+void File::save_data(const std::string &path)
+{
+        FileMap_G<Element> outfile(path, O_SAVE, _file_size);
+        memcpy(outfile.addr(), _data, _file_size);
 }
 
 }
