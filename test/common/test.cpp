@@ -74,7 +74,7 @@ void p(const Matrix &m1, const Matrix &m2, ostream& buffer)
         {
                 bool fcol = true;
                 Element *elem = *rowA;
-                for (size_t j=0; j<ncols; ++j, ++elem)
+                for (size_t j=0; j<m1.ncols; ++j, ++elem)
                 {
                         if (fcol) fcol=false;
                         else buffer << ' ';
@@ -85,7 +85,7 @@ void p(const Matrix &m1, const Matrix &m2, ostream& buffer)
                 buffer << " | ";
                 fcol = true;
                 elem = *rowB;
-                for (size_t j=0; j<ncols; ++j, ++elem)
+                for (size_t j=0; j<m2.ncols; ++j, ++elem)
                 {
                         if (fcol) fcol=false;
                         else buffer << ' ';
