@@ -45,11 +45,13 @@ namespace coding
 
         class BlockList
         {
-                Block **blocklist;
+                size_t _count;
+                size_t _capacity;
+                Block **_blocklist;
         public:
-                BlockList(size_t start_size = 1)
-                        : blocklist(new *Block[start_size]);
-                {}
+                BlockList(size_t start_size = 1);
+
+                void add(Block *blk);
         };
 
         Element *load_file(const std::string &path);

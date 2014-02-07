@@ -27,5 +27,30 @@ namespace rnc
 namespace coding
 {
 
+BlockList::BlockList(size_t start_size)
+        : _count(0),
+          _capacity(start_size),
+          _blocklist(static_cast<Block**>(malloc(_capacity*sizeof(Block*))))
+{
+}
+
+void BlockList::add(Block* blk)
+{
+        if (_count == _capacity)
+        {
+                _capacity *= 2;
+                _blocklist = static_cast<Block**>(
+                        realloc(_blocklist, _capacity*sizeof(Block*)));
+        }
+        _blocklist[_count++] = blk;
+}
+
+BlockList File::block_list() const
+{
+        BlockList bl(_data_size / _ncols);
+
+        return bl;
+}
+
 }
 }
