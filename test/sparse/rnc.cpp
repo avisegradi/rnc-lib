@@ -112,30 +112,69 @@ void p(const BlockList &blocks)
         p(*C, *D, cout);
 }
 
-void replenish(BlockList &src, BlockList &dst, int target)
+struct WSGatherResult
+{
+        bool success;
+        int wasted_capacity;
+        Matrix *inverse;
+        WSGatherResult(size_t N, bool success, int wasted_capacity)
+                : success(success), wasted_capacity(wasted_capacity),
+                  inverse(new Matrix(N, N))
+        {}
+
+        void p(const char *prefix = "")
+        {
+                printf("%sWSGatherResult -- success=%s ; wasted_capacity=%d\n",
+                       prefix, success ? "true" : "false", wasted_capacity);
+        }
+};
+
+WSGatherResult gather_working_set(BlockList &src, BlockList &working_set)
+{
+        const size_t N = (*src.blocks())->coeff_count;
+
+        WSGatherResult result(N, false, 0);
+
+        if (src.count() < N)
+                return result;
+
+        BlockList source_set = src.shallow_copy();
+
+        p(source_set);
+        for (size_t i = 0; i < N; ++i)
+                working_set.add(source_set.random_drop(&rnd_state));
+
+        for (int i=0; ; ++i) {
+                auto_ptr<Matrix> m(working_set.to_matrix(BlockList::Coefficients));
+                if (matrix::invert(*m, *(result.inverse)))
+                {
+                        m.release();
+                        break;
+                }
+
+                if (source_set.count() == 0)
+                        return result;
+
+                working_set.random_drop(&rnd_state);
+                working_set.add(source_set.random_drop(&rnd_state));
+                result.wasted_capacity += 1;
+        }
+
+        result.success = true;
+        return result;
+}
+
+WSGatherResult replenish(BlockList &src, BlockList &dst, int target)
 {
         const size_t N = (*src.blocks())->coeff_count;
         const size_t M = (*src.blocks())->block_length;
         const int cnt = target - dst.count();
-        BlockList source_set = src.shallow_copy();
+
         BlockList working_set(N);
 
-        for (size_t i = 0; i < N; ++i)
-                working_set.add(source_set.random_drop(&rnd_state));
-
-        int replenish_trials = 0;
-        Matrix inverse(N, N);
-        for (int i=0;  source_set.count() > 0; ++i) {
-                printf("%d\n", i);
-                auto_ptr<Matrix> m(working_set.to_matrix(BlockList::Coefficients));
-                if (matrix::invert(*m, inverse)) break;
-                working_set.random_drop(&rnd_state);
-                working_set.add(source_set.random_drop(&rnd_state));
-                replenish_trials += 1;
-        }
-
-        if (replenish_trials > 0)
-                printf("replenish: trials: %d\n", replenish_trials);
+        WSGatherResult res = gather_working_set(src, working_set);
+        if (!res.success)
+                return res;
 
         printf("### Working set:\n");
         p(working_set);
@@ -163,6 +202,8 @@ void replenish(BlockList &src, BlockList &dst, int target)
 
                 dst.add(blk);
         }
+
+        return res;
 }
 
 int main(int argc, char **argv)
