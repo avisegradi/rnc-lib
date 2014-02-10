@@ -112,6 +112,54 @@ void p(const BlockList &blocks)
         p(*C, *D, cout);
 }
 
+void replenish(BlockList &src, BlockList &dst, int target)
+{
+        const size_t N = (*src.blocks())->coeff_count;
+        const size_t M = (*src.blocks())->block_length;
+        const int cnt = target - dst.count();
+        BlockList source_set = src.shallow_copy();
+        BlockList working_set(N);
+
+        for (size_t i = 0; i < N; ++i)
+                working_set.add(source_set.random_drop(&rnd_state));
+
+        int replenish_trials = 0;
+        Matrix inverse(N, N);
+        for (int i=0;  source_set.count() > 0; ++i) {
+                printf("%d\n", i);
+                auto_ptr<Matrix> m(working_set.to_matrix(BlockList::Coefficients));
+                if (matrix::invert(*m, inverse)) break;
+                working_set.random_drop(&rnd_state);
+                working_set.add(source_set.random_drop(&rnd_state));
+                replenish_trials += 1;
+        }
+
+        if (replenish_trials > 0)
+                printf("replenish: trials: %d\n", replenish_trials);
+
+        printf("### Working set:\n");
+        p(working_set);
+
+        auto_ptr<Matrix> dataP(working_set.to_matrix(BlockList::Data));
+        Matrix &data = *dataP;
+
+        for (int i=0; i<cnt; ++i)
+        {
+                Matrix coeff(1, N, false);
+                Matrix result(1, M, false);
+                rand_matr(coeff, &rnd_state);
+                mul(coeff, data, result);
+
+                Block *blk = new Block();
+                blk->coefficients = coeff.rows[0];
+                blk->data = result.rows[0];
+                blk->coeff_count = N;
+                blk->block_length = M;
+
+                dst.add(blk);
+        }
+}
+
 int main(int argc, char **argv)
 try
 {
