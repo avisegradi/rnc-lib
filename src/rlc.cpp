@@ -149,6 +149,20 @@ BlockList BlockList::random_sample(size_t size, random::mt_state *state) const
         return BlockList(result, size, size, false);
 }
 
+void BlockList::random_drop(double p, size_t max_count, random::mt_state *state)
+{
+        size_t cnt = 0;
+//        random::shuffle(*_blocklist, _count, state);
+        for (size_t i=0; i<_count && cnt < max_count; ++i)
+                if (random::generateP(state) < p)
+                {
+                        drop(i);
+                        ++cnt;
+                        --i;
+                }
+}
+
+
 BlockList File::block_list(Row coefficients[]) const
 {
         BlockList bl(_nrows, true);

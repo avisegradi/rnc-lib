@@ -69,6 +69,7 @@ namespace coding
                 Matrix *to_matrix(ToMatrixMode mode) const;
                 void to_matrices(Matrix **coefficients, Matrix **data) const;
                 BlockList random_sample(size_t size, random::mt_state *state) const;
+                void random_drop(double p, size_t max_count, random::mt_state *state);
         };
 
         class File
