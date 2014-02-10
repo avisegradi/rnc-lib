@@ -172,11 +172,14 @@ void BlockList::random_drop(double p, size_t max_count, random::mt_state *state)
                 }
 }
 
-void BlockList::random_drop(random::mt_state *state)
+Block *BlockList::random_drop(random::mt_state *state)
 {
-        drop(random::generate(state) % _count);
+        size_t index = random::generate(state) % _count;
+        Block *blk = _blocklist[index];
+        drop(index);
+        if (_cleanup) return NULL; //In this case, drop invalidates that memory area
+        else return blk;
 }
-
 
 BlockList File::block_list(Row coefficients[]) const
 {
