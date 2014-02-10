@@ -72,19 +72,16 @@ namespace matrix
                         for (int i=nrows; i>0; --i, ++r, rowstart += ncols)
                                 *r = rowstart;
                 }
-                Matrix(size_t nrows, size_t ncols, bool init0 = false)
+                Matrix(size_t nrows, size_t ncols, bool cleanup = true)
                         : rows(reinterpret_cast<Row*>(malloc(sizeof(Row)*nrows))),
                           nrows(nrows),
                           ncols(ncols),
-                          cleanup(true)
+                          cleanup(cleanup)
                 {
                         const size_t rowsize = sizeof(Element)*ncols;
                         Row *r = rows;
                         for (int i=nrows; i>0; --i, ++r)
-                                if (init0)
-                                        *r = new Element[ncols]();
-                                else
-                                        *r = reinterpret_cast<Row>(malloc(rowsize));
+                                *r = (Row)(malloc(rowsize));
                 }
                 ~Matrix()
                 {
