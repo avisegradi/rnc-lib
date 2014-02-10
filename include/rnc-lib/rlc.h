@@ -71,6 +71,10 @@ namespace coding
                 BlockList random_sample(size_t size, random::mt_state *state) const;
                 void random_drop(double p, size_t max_count, random::mt_state *state);
                 void random_drop(random::mt_state *state);
+                inline Block *random_block(random::mt_state *state)
+                {
+                        return _blocklist[random::generate(state) % _count];
+                }
         };
 
         class File
