@@ -124,7 +124,7 @@ struct WSGatherResult
 
         void p(const char *prefix = "")
         {
-                printf("%sWSGatherResult -- success=%s ; wasted_capacity=%d\n",
+                printf("%ssuccess=%s ; wasted_capacity=%d\n",
                        prefix, success ? "true" : "false", wasted_capacity);
         }
 };
@@ -251,8 +251,6 @@ try
         printf("C: %lu x %lu\n", C->nrows, C->ncols);
         printf("D: %lu x %lu\n", D->nrows, D->ncols);
         p(orig);
-
-        p(blocks);
 
         /*
         BlockList sample = blocks.random_sample(15, &rnd_state);
