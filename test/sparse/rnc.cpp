@@ -164,7 +164,7 @@ WSGatherResult gather_working_set(BlockList &src, BlockList &working_set)
         return result;
 }
 
-WSGatherResult replenish(BlockList &src, BlockList &dst, int target)
+WSGatherResult replenish(BlockList &src, BlockList &dst, int target, double A)
 {
         const size_t N = (*src.blocks())->coeff_count;
         const size_t M = (*src.blocks())->block_length;
@@ -190,7 +190,7 @@ WSGatherResult replenish(BlockList &src, BlockList &dst, int target)
                 Matrix rnd_coeff(1, N);
                 Matrix result_coeff(1, N, false);
                 Matrix result_data(1, M, false);
-                rand_matr(rnd_coeff, &rnd_state);
+                rand_matr(rnd_coeff, A, &rnd_state);
                 mul(rnd_coeff, coeff, result_coeff);
                 mul(rnd_coeff, data, result_data);
 
@@ -268,7 +268,7 @@ try
         */
 
         BlockList block_set(N, true);
-        replenish(blocks, block_set, R);
+        replenish(blocks, block_set, R, A);
 
         printf("### Coded set:\n");
         p(block_set);
