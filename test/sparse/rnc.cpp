@@ -119,21 +119,26 @@ try
 
         random::init(&rnd_state, time(NULL));
 
-        if (argc < 7)
+        if (argc < 8)
                 throw string(MKStr() << "usage: " << argv[0] <<
-                             " <input filename> <N : block count> "
-                             "<A : sparse coding factor> <R : redundancy target> "
-                             "<M : number of clients> <id>");
+                             " <input filename> "
+                             "<N : block count> "
+                             "<A : sparse coding factor> "
+                             "<T : redundancy threshold> "
+                             "<R : redundancy target> "
+                             "<F : failure probability> "
+                             "<id>");
 
         const string fname = argv[1];
         const int N = getint(argv[2]);
         const double A = getdouble(argv[3]);
-        const int R = getint(argv[4]);
-        const int M = getint(argv[5]);
-        const int id = getint(argv[6]);
+        const int T = getint(argv[4]);
+        const int R = getint(argv[5]);
+        const double F = getdouble(argv[6]);
+        const int id = getint(argv[7]);
 
-        printf("%02d MEM file=%s q=%d mode=sim N=%d A=%f R=%d M=%d\n",
-               id, fname.c_str(), fq_size, N, A, R, M);
+        printf("%02d MEM file=%s q=%d mode=sim N=%d A=%f T=%d R=%d F=%f\n",
+               id, fname.c_str(), fq_size, N, A, T, R, F);
 
         File infile(fname, N);
 
@@ -151,11 +156,16 @@ try
         printf("D: %lu x %lu\n", D->nrows, D->ncols);
         p(orig);
 
-
         p(blocks);
 
-        printf("###############################\n");
-        BlockList sample = blocks.random_sample(10, &rnd_state);
+        BlockList sample = blocks.random_sample(15, &rnd_state);
+        printf("### Random sample:\n");
+        p(sample);
+        sample.drop(1);
+        printf("### Dropped @[1]:\n");
+        p(sample);
+        sample.random_drop(0.3, 15, &rnd_state);
+        printf("### Random drop:\n");
         p(sample);
 
         /*
