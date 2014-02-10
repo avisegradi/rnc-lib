@@ -67,14 +67,16 @@ void BlockList::add(Block* blk)
         _blocklist[_count++] = blk;
 }
 
-void BlockList::drop(size_t index, bool cleanup) throw (std::range_error)
+void BlockList::drop(size_t index) throw (std::range_error)
 {
         if (index >= _count) throw std::range_error("drop: index out of range");
 
-        if (cleanup)
+        if (_cleanup)
                 delete _blocklist[index];
 
-        memmove(_blocklist+index, _blocklist+index+1, (_count-index)*sizeof(Block));
+        for (size_t to=index; to<_count-1; ++to)
+                _blocklist[to] = _blocklist[to+1];
+
         --_count;
 }
 
@@ -144,7 +146,7 @@ BlockList BlockList::random_sample(size_t size, random::mt_state *state) const
                 throw std::runtime_error("realloc failed in random_sample()");
         }
 
-        return BlockList(result, size, size, true);
+        return BlockList(result, size, size, false);
 }
 
 BlockList File::block_list(Row coefficients[]) const

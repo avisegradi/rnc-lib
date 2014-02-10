@@ -56,7 +56,7 @@ namespace coding
                 ~BlockList();
 
                 void add(Block *blk);
-                void drop(size_t index, bool cleanup = false) throw (std::range_error);
+                void drop(size_t index) throw (std::range_error);
                 inline size_t count() const { return _count; }
                 inline size_t capacity() const { return _capacity; }
                 inline Block** blocks() const { return _blocklist; }
