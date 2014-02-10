@@ -58,6 +58,13 @@ int getint(string str)
         ss >> i;
         return i;
 }
+double getdouble(string str)
+{
+        stringstream ss(str);
+        double i;
+        ss >> i;
+        return i;
+}
 
 double tdiff(const struct timeval& t1,
              const struct timeval& t2)
@@ -101,16 +108,17 @@ try
 
         random::init(&rnd_state, time(NULL));
 
-        if (argc < 7)
+        if (argc < 8)
                 throw string(MKStr() << "usage: " << argv[0] <<
-                             " <input filename> <N> <ncpus> <blocksize> <mode> <id>");
+                             " <input filename> <N> <A> <ncpus> <blocksize> <mode> <id>");
 
         const string fname = argv[1];
         const int N = getint(argv[2]);
-        NCPUS = getint(argv[3]);
-        BLOCK_SIZE = getint(argv[4]);
-        const string mode = argv[5];
-        const string id = argv[6];
+        const double A = getdouble(argv[3]);
+        NCPUS = getint(argv[4]);
+        BLOCK_SIZE = getint(argv[5]);
+        const string mode = argv[6];
+        const string id = argv[7];
         const string &fout = fname + "_coded_" + id;
         const string &fdec = fname + "_decoded_" + id;
         const string &fmatr = fname + "_matr_" + id;
@@ -135,7 +143,7 @@ try
                         gettimeofday(&begin_gen, 0);
                         do {
                                 ++sing;
-                                rand_matr(m1, &rnd_state);
+                                rand_matr(m1, A, &rnd_state);
                         } while (!invert(m1, minv));
                         gettimeofday(&end_gen, 0);
                 }
