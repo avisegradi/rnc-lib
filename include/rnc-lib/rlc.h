@@ -52,6 +52,7 @@ namespace coding
                 Block **_blocklist;
                 BlockList(Block **blist, size_t count, size_t capacity, bool cleanup);
         public:
+                BlockList shallow_copy();
                 BlockList(size_t start_size = 1, bool cleanup = false);
                 ~BlockList();
 

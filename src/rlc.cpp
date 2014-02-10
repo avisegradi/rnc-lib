@@ -48,6 +48,16 @@ BlockList::BlockList(size_t start_size, bool cleanup)
 {
 }
 
+BlockList BlockList::shallow_copy()
+{
+        const size_t list_size = _count*sizeof(Block*);
+        Block **copy = (Block**)(malloc(list_size));
+
+        memcpy(copy, _blocklist, list_size);
+
+        return BlockList(copy, _count, _count, false);
+}
+
 BlockList::~BlockList()
 {
         if (_cleanup)
