@@ -84,10 +84,9 @@ void BlockList::drop(size_t index) throw (std::range_error)
         if (_cleanup)
                 delete _blocklist[index];
 
-        for (size_t to=index; to<_count-1; ++to)
-                _blocklist[to] = _blocklist[to+1];
-
         --_count;
+        for (size_t to = index; to < _count; ++to)
+                _blocklist[to] = _blocklist[to + 1];
 }
 
 Matrix *BlockList::to_matrix(ToMatrixMode mode) const
