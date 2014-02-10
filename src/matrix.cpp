@@ -25,6 +25,7 @@
 #include <string.h>
 #include <glib.h>
 #include <mkstr>
+#include <memory>
 #include <auto_arr_ptr>
 #include <string>
 
@@ -95,24 +96,53 @@ void copy(const Matrix &m, Element* dest) throw()
                 memcpy(d, *row, rowsize);
 }
 
+int find_pivot(Row *row_list, size_t start_index, size_t N)
+{
+        // As the group is cyclic, there is no reason to find the maximal pivot
+        for (size_t i = start_index; i < N; ++i)
+                if (row_list[i][start_index])
+                        return i;
+        return -1;
+}
+
 bool invert(const Matrix &m_in, Matrix &res) throw ()
 {
         CACHE_DIMS(m_in);
 
+        const size_t row_list_size = nrows * sizeof(Row);
+        Row *m_rows = (Row*)malloc(row_list_size); std::auto_ptr<Row> m_rows_ap(m_rows);
+        Row *d_rows = (Row*)malloc(row_list_size); std::auto_ptr<Row> d_rows_ap(d_rows);
+
         Matrix m(nrows, ncols);
         copy(m_in, m);
+        memcpy(m_rows, m.rows, row_list_size);
+        memcpy(d_rows, res.rows, row_list_size);
         set_identity(res);
 
-        Row *rm = m.rows;
-        Row *rd = res.rows;
+        Row *rm = m_rows;
+        Row *rd = d_rows;
         for (size_t i=0; i<nrows; ++i, ++rm, ++rd)
         {
+                int pivot = find_pivot(m_rows, i, nrows);
+                if (pivot < 0) return false;
+
+                if ((size_t)pivot != i)
+                {
+                        Row t = m_rows[i];
+                        m_rows[i] = m_rows[pivot];
+                        m_rows[pivot] = t;
+
+                        t = d_rows[i];
+                        d_rows[i] = d_rows[pivot];
+                        d_rows[pivot] = t;
+                }
+
                 Row const m_i = *rm;
                 Row const res_i = *rd;
 
                 //normalize row
                 const Element p = RE(m_i,i);
-                if (p == 0) return false; // \todo: row-switch
+                if (p == 0) return false;
 
                 for (size_t c=0; c<ncols; ++c)
                 {
@@ -137,8 +167,8 @@ bool invert(const Matrix &m_in, Matrix &res) throw ()
         }
 
         //back-substitution
-        rd = res.rows + nrows - 1;
-        rm = m.rows + nrows - 1;
+        rd = d_rows + nrows - 1;
+        rm = m_rows + nrows - 1;
         for (int i=nrows-1; i>=0; --i, --rd, --rm)
         {
                 Row const res_i = *rd;
