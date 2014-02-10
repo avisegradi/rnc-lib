@@ -140,19 +140,24 @@ void replenish(BlockList &src, BlockList &dst, int target)
         printf("### Working set:\n");
         p(working_set);
 
-        auto_ptr<Matrix> dataP(working_set.to_matrix(BlockList::Data));
+        Matrix *coeffP, *dataP;
+        working_set.to_matrices(&coeffP, &dataP);
+        auto_ptr<Matrix> coeffap(coeffP), dataap(dataP);
+        Matrix &coeff = *coeffP;
         Matrix &data = *dataP;
 
         for (int i=0; i<cnt; ++i)
         {
-                Matrix coeff(1, N, false);
-                Matrix result(1, M, false);
-                rand_matr(coeff, &rnd_state);
-                mul(coeff, data, result);
+                Matrix rnd_coeff(1, N);
+                Matrix result_coeff(1, N, false);
+                Matrix result_data(1, M, false);
+                rand_matr(rnd_coeff, &rnd_state);
+                mul(rnd_coeff, coeff, result_coeff);
+                mul(rnd_coeff, data, result_data);
 
                 Block *blk = new Block();
-                blk->coefficients = coeff.rows[0];
-                blk->data = result.rows[0];
+                blk->coefficients = result_coeff.rows[0];
+                blk->data = result_data.rows[0];
                 blk->coeff_count = N;
                 blk->block_length = M;
 
