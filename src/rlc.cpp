@@ -162,6 +162,11 @@ void BlockList::random_drop(double p, size_t max_count, random::mt_state *state)
                 }
 }
 
+void BlockList::random_drop(random::mt_state *state)
+{
+        drop(random::generate(state) % _count);
+}
+
 
 BlockList File::block_list(Row coefficients[]) const
 {
