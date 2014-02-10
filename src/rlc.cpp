@@ -103,6 +103,30 @@ Matrix *BlockList::to_matrix(ToMatrixMode mode) const
         return new Matrix(rows, _count, ncols);
 }
 
+void BlockList::to_matrices(Matrix **coefficients, Matrix **data) const
+{
+        Row *rows_c = new Row[_count];
+        Row *rows_d = new Row[_count];
+
+        size_t ncols_c = 0;
+        size_t ncols_d = 0;
+        Block **b = _blocklist;
+        Row *rc = rows_c;
+        Row *rd = rows_d;
+
+        for (size_t i = 0; i<_count; ++i, ++b, ++rc, ++rd)
+        {
+                ncols_c = (*b)->coeff_count;
+                ncols_d = (*b)->block_length;
+
+                *rc = (*b)->coefficients;
+                *rd = (*b)->data;
+        }
+
+        *coefficients = new Matrix(rows_c, _count, ncols_c);
+        *data = new Matrix(rows_d, _count, ncols_d);
+}
+
 BlockList BlockList::random_sample(size_t size, random::mt_state *state) const
 {
         if (size > _count)
