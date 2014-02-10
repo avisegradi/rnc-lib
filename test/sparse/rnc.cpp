@@ -273,22 +273,20 @@ try
         printf("### Coded set:\n");
         p(block_set);
 
-        BlockList reconstruct_sample = block_set.random_sample(N, &rnd_state);
-        reconstruct_sample.to_matrices(&C, &D);
+        BlockList reconstruct_sample(N);
+        WSGatherResult res = gather_working_set(block_set, reconstruct_sample);
+        delete C;
+        delete D;
 
-        Matrix inverse(N, N);
+        D = reconstruct_sample.to_matrix(BlockList::Data);
+
         Matrix decoded(N, M);
-        if (!invert(*C, inverse))
-        {
-                printf("Singular matrix.\n");
-        }
-        else
-        {
-                mul(inverse, *D, decoded);
+        mul(*(res.inverse), *D, decoded);
 
-                printf("### Decoded:\n");
-                p(decoded);
-        }
+        printf("### Decoded:\n");
+        p(decoded);
+
+        res.p("RESULT # ");
 
         return 0;
 }
