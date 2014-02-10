@@ -54,6 +54,13 @@ int main(int argc, char **argv)
                 fprintf(f, "%f\n", rnc::random::generateP(&state));
         fclose(f);
 
+        int nums[50];
+        for (int i=0; i<50; ++i) nums[i]=i;
+        rnc::random::shuffle(nums, 50, &state);
+        for (int i=0; i<50; ++i)
+                printf("%3d", nums[i]);
+        printf("\n");
+
         printf("Written %d random numbers to '%s'\n", n, OUTFNAME);
 
         return 0;

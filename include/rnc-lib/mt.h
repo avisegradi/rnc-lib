@@ -83,6 +83,22 @@ namespace random
                 static const double MAXVAL = double(random_type(~0));
                 return generate(state)/MAXVAL;
         }
+
+        /**
+           \brief Knuth -- Fisher-Yates shuffle
+        */
+        template <class T>
+        void shuffle(T data[], int size, mt_state *state)
+        {
+                for (int i=0; i<size; ++i)
+                {
+                        int k = i + random::generate(state) % (size - i);
+                        T t = data[i];
+                        data[i] = data[k];
+                        data[k] = t;
+                }
+        }
+
 }
 }
 
