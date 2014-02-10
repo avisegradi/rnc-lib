@@ -190,7 +190,9 @@ try
 
         File infile(fname, N);
 
-        Matrix orig(infile.data(), infile.nrows(), infile.ncols());
+        const int M = infile.ncols();
+
+        Matrix orig(infile.data(), N, M);
         Matrix identity(N, N);
         set_identity(identity);
         BlockList blocks = infile.block_list(identity.rows);
@@ -206,6 +208,7 @@ try
 
         p(blocks);
 
+        /*
         BlockList sample = blocks.random_sample(15, &rnd_state);
         printf("### Random sample:\n");
         p(sample);
@@ -215,129 +218,33 @@ try
         sample.random_drop(0.3, 15, &rnd_state);
         printf("### Random drop:\n");
         p(sample);
-
-        /*
-                off_t fsize;
-                Matrix m1(N, N);
-                auto_arr_ptr<Element> mi_data;
-
-                struct timeval begin_gen, end_gen;
-                int sing = 0;
-
-                {
-                        Matrix minv(N, N);
-                        gettimeofday(&begin_gen, 0);
-                        do {
-                                ++sing;
-                                rand_matr(m1, p, &rnd_state);
-                        } while (!invert(m1, minv));
-                        gettimeofday(&end_gen, 0);
-                }
-
-                {
-                        FileMap infile(fname);
-                        fsize = infile.size();
-
-                        if (fsize % N)
-                                throw string(MKStr()
-                                             << "File size (" << fsize
-                                             << ") is not dividable by block size ("
-                                             << N << ")");
-
-                        mi_data = new Element[fsize / sizeof(Element)];
-                        memcpy(mi_data, infile.addr(), fsize);
-                }
-
-                const size_t ncols = fsize/N/sizeof(Element);
-                Matrix mi(mi_data, N, ncols);
-                Matrix mc(N, ncols);
-
-                struct timeval begin, end;
-                gettimeofday(&begin, 0);
-                pmul(m1, mi, mc);
-                gettimeofday(&end, 0);
-
-                printf("matrgen=%s ", timediff(begin_gen, end_gen));
-                printf("t=%s ", timediff(begin, end));
-                printf("tp=%s\n", throughput(fsize, begin, end));
-
-                {
-                        FileMap fm(fmatr, O_SAVE, N*N*sizeof(Element));
-                        copy(m1, fm.addr());
-                }
-                {
-                        FileMap fm(fout, O_SAVE, fsize);
-                        copy(mc, fm.addr());
-                }
-
-                if (sing > 1)
-                        printf("# Singular matrices generated: %d\n", sing-1);
-        }
-
-        bool singular=false;
-        if (mode == "d")
-        {
-                printf("MEM file=%s mode=d q=%d N=%d CPUs=%d BS=%d ",
-                       fname.c_str(), fq_size, N, NCPUS, BLOCK_SIZE);
-
-                off_t fsize;
-                auto_arr_ptr<Element> m1_data;
-                auto_arr_ptr<Element> mi_data;
-
-                {
-                        FileMap matr(fmatr);
-                        m1_data = new Element[N*N];
-                        memcpy(m1_data, matr.addr(), matr.size());
-                }
-                {
-                        FileMap infile(fout);
-                        fsize = infile.size();
-
-                        if (fsize % N)
-                                throw string(MKStr()
-                                             << "File size (" << fsize
-                                             << ") is not dividable by block size ("
-                                             << N << ")");
-
-                        mi_data = new Element[fsize / sizeof(Element)];
-                        memcpy(mi_data, infile.addr(), fsize);
-                }
-
-                const size_t ncols = fsize/N/sizeof(Element);
-                Matrix m1(m1_data, N, N);
-                Matrix mi(mi_data, N, ncols);
-                Matrix minv(N, N);
-
-                struct timeval begin_inv, end_inv;
-                gettimeofday(&begin_inv, 0);
-                if (!invert(m1, minv))
-                {
-                        singular=true;
-                        goto __break;
-                }
-                gettimeofday(&end_inv, 0);
-
-                Matrix md(N, ncols);
-
-                struct timeval begin, end;
-                gettimeofday(&begin, 0);
-                pmul(minv, mi, md);
-                gettimeofday(&end, 0);
-
-                printf("matrinv=%s ", timediff(begin_inv, end_inv));
-                printf("t=%s ", timediff(begin, end));
-                printf("tp=%s\n", throughput(fsize, begin, end));
-
-                {
-                        FileMap fm(fdec, O_SAVE, fsize);
-                        copy(md, fm.addr());
-                }
-        }
-
-__break:
-        if (singular)
-                throw string("Generated matrix was singular.");
+        sample.random_drop(&rnd_state);
+        printf("### Random drop one:\n");
+        p(sample);
         */
+
+        BlockList block_set(N, true);
+        replenish(blocks, block_set, R);
+
+        printf("### Coded set:\n");
+        p(block_set);
+
+        BlockList reconstruct_sample = block_set.random_sample(N, &rnd_state);
+        reconstruct_sample.to_matrices(&C, &D);
+
+        Matrix inverse(N, N);
+        Matrix decoded(N, M);
+        if (!invert(*C, inverse))
+        {
+                printf("Singular matrix.\n");
+        }
+        else
+        {
+                mul(inverse, *D, decoded);
+
+                printf("### Decoded:\n");
+                p(decoded);
+        }
 
         return 0;
 }
