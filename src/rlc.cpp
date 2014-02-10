@@ -23,12 +23,22 @@
 #include <rnc-lib/rlc.h>
 #include <filemap>
 #include <string.h>
+#include <stdexcept>
 
+// Autoindent hack
 #define NS_BEGIN(a) namespace a {
 #define NS_END(a)   }
 
 NS_BEGIN(rnc)
 NS_BEGIN(coding)
+
+BlockList::BlockList(Block **blist, size_t count, size_t capacity, bool cleanup)
+      : _cleanup(cleanup),
+        _count(count),
+        _capacity(capacity),
+        _blocklist(blist)
+{
+}
 
 BlockList::BlockList(size_t start_size, bool cleanup)
       : _cleanup(cleanup),
@@ -91,6 +101,26 @@ Matrix *BlockList::to_matrix(ToMatrixMode mode) const
         }
 
         return new Matrix(rows, _count, ncols);
+}
+
+BlockList BlockList::random_sample(size_t size, random::mt_state *state) const
+{
+        if (size > _count)
+                throw std::range_error("Sample size is too big");
+
+        Block **sample = static_cast<Block**>(malloc(_count*sizeof(Block*)));
+
+        memcpy(sample, _blocklist, _count*sizeof(Block*));
+        random::shuffle(sample, _count, state);
+
+        Block **result = static_cast<Block **>(realloc(sample, size*sizeof(Block*)));
+        if (!result)
+        {
+                free(sample);
+                throw std::runtime_error("realloc failed in random_sample()");
+        }
+
+        return BlockList(result, size, size, true);
 }
 
 BlockList File::block_list(Row coefficients[]) const

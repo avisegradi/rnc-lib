@@ -102,6 +102,16 @@ char* timediff(const struct timeval& t1,
         return buf;
 }
 
+void p(const BlockList &blocks)
+{
+        Matrix *C, *D;
+        blocks.to_matrices(&C, &D);
+
+        auto_ptr<Matrix> apC(C), apD(D);
+
+        p(*C, *D, cout);
+}
+
 int main(int argc, char **argv)
 try
 {
@@ -134,13 +144,19 @@ try
 
         printf("block count: %lu\n", blocks.count());
 
-        auto_ptr<Matrix> C(blocks.to_matrix(BlockList::Coefficients));
-        auto_ptr<Matrix> D(blocks.to_matrix(BlockList::Data));
+        Matrix *C, *D;
+        blocks.to_matrices(&C, &D);
 
         printf("C: %lu x %lu\n", C->nrows, C->ncols);
         printf("D: %lu x %lu\n", D->nrows, D->ncols);
         p(orig);
-        p(*C, *D, cout);
+
+
+        p(blocks);
+
+        printf("###############################\n");
+        BlockList sample = blocks.random_sample(10, &rnd_state);
+        p(sample);
 
         /*
                 off_t fsize;
@@ -266,6 +282,10 @@ __break:
         */
 
         return 0;
+}
+catch (exception &ex)
+{
+        cerr << "Error: " << ex.what() << endl;
 }
 catch (const string &msg)
 {

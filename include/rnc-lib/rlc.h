@@ -50,6 +50,7 @@ namespace coding
                 size_t _count;
                 size_t _capacity;
                 Block **_blocklist;
+                BlockList(Block **blist, size_t count, size_t capacity, bool cleanup);
         public:
                 BlockList(size_t start_size = 1, bool _cleanup = false);
                 ~BlockList();
@@ -66,6 +67,7 @@ namespace coding
                 };
 
                 Matrix *to_matrix(ToMatrixMode mode) const;
+                BlockList random_sample(size_t size, random::mt_state *state) const;
         };
 
         class File
