@@ -187,6 +187,10 @@ bool invert(const Matrix &m_in, Matrix &res) throw ()
                 }
         }
 
+        delete res.rows;
+        res.rows = d_rows;
+        d_rows_ap.release();
+
         return true;
 }
 
