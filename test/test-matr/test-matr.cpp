@@ -158,8 +158,13 @@ public:
                 Matrix _A(_rows, _cols);
                 Matrix _Ai(_rows, _cols);
 
-                rand_matr(_A, &rnd_state);
-                invert(_A, _Ai);
+                rand_matr(_A, 0.5, &rnd_state);
+                if (!invert(_A, _Ai))
+                {
+                        if (buffer)
+                                (*buffer) << " SINGULAR ";
+                        return true;
+                }
 
                 pmul(_A, _Ai, _I);
                 set_identity(_A);
@@ -171,7 +176,14 @@ public:
                 }
 
                 bool retval = equals(_A, _I);
-
+                if (!retval)
+                {
+                        if (buffer)
+                        {
+                                (*buffer) << '\n';
+                                p(_I, *buffer);
+                        }
+                }
                 return retval;
         }
 };
@@ -242,7 +254,9 @@ int main(int, char **)
         FORALL_ij_square cases.push_back(new Bootstrap(1, *i, *j));
         FORALL_ij cases.push_back(new Identity(5, *i, *j));
         FORALL_ij if (*i>1 && *j>1) cases.push_back(new RndEq(5, *i, *j));
-        FORALL_ij_square cases.push_back(new Inversion(5, *i, *j));
+        FORALL_ij_square
+                if (*i != 1)
+                        cases.push_back(new Inversion(5, *i, *j));
         FORALL_ij {
                 for (const double *P = ps; *P >= 0; ++P)
                         cases.push_back(new SparseMatrix(5, *i, *j, *P));
