@@ -162,7 +162,7 @@ namespace matrix
 
             \test A = mul(A, mul(A, invert(A))) | \f$\exists A^{-1}\f$
         */
-        bool invert(const Matrix &m_in, Matrix &res) throw ();
+        bool invert(const Matrix &m_in, Matrix &res, Row ** inversions = NULL) throw ();
 
         // (rows1 x cols1) * (cols1 x cols2) = (rows1 x cols2)
         /** \brief Matrix multiplication: \f$md:=m1*m2\f$

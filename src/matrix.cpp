@@ -105,18 +105,25 @@ int find_pivot(Row *row_list, size_t start_index, size_t N)
         return -1;
 }
 
-bool invert(const Matrix &m_in, Matrix &res) throw ()
+        bool invert(const Matrix &m_in, Matrix &res, Row ** inversions) throw ()
 {
         CACHE_DIMS(m_in);
 
         const size_t row_list_size = nrows * sizeof(Row);
-        Row *m_rows = (Row*)malloc(row_list_size); std::auto_ptr<Row> m_rows_ap(m_rows);
-        Row *d_rows = (Row*)malloc(row_list_size); std::auto_ptr<Row> d_rows_ap(d_rows);
+        Row *m_rows = (Row*)malloc(row_list_size);
+        Row *d_rows = (Row*)malloc(row_list_size);
+        Row *i_rows = inversions ? (Row*)malloc(row_list_size) : NULL;
+
+        std::auto_ptr<Row> m_rows_ap(m_rows);
+        std::auto_ptr<Row> d_rows_ap(d_rows);
+        std::auto_ptr<Row> i_rows_ap(i_rows);
 
         Matrix m(nrows, ncols);
         copy(m_in, m);
         memcpy(m_rows, m.rows, row_list_size);
         memcpy(d_rows, res.rows, row_list_size);
+        if (inversions)
+                memcpy(i_rows, *inversions, row_list_size);
         set_identity(res);
 
         Row *rm = m_rows;
@@ -135,6 +142,13 @@ bool invert(const Matrix &m_in, Matrix &res) throw ()
                         t = d_rows[i];
                         d_rows[i] = d_rows[pivot];
                         d_rows[pivot] = t;
+
+                        if (inversions)
+                        {
+                                t = i_rows[i];
+                                i_rows[i] = i_rows[pivot];
+                                i_rows[pivot] = t;
+                        }
                 }
 
                 Row const m_i = *rm;
@@ -187,6 +201,11 @@ bool invert(const Matrix &m_in, Matrix &res) throw ()
                 }
         }
 
+        if (inversions) {
+                delete *inversions;
+                *inversions = i_rows;
+                i_rows_ap.release();
+        }
         delete res.rows;
         res.rows = d_rows;
         d_rows_ap.release();
