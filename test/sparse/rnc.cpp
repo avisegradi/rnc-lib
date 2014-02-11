@@ -270,21 +270,33 @@ try
         BlockList block_set(N, true);
         replenish(blocks, block_set, R, A);
 
-        printf("### Coded set:\n");
-        p(block_set);
+        //printf("### Coded set:\n");
+        //p(block_set);
 
         BlockList reconstruct_sample(N);
         WSGatherResult res = gather_working_set(block_set, reconstruct_sample);
-        delete C;
-        delete D;
 
-        D = reconstruct_sample.to_matrix(BlockList::Data);
+        if (res.success)
+        {
+                Matrix *Cx, *Dx;
+                reconstruct_sample.to_matrices(&Cx, &Dx);
 
-        Matrix decoded(N, M);
-        mul(*(res.inverse), *D, decoded);
+                Matrix decoded(N, M);
+                Matrix inverse(N, N);
+                Matrix x(N, N);
+                p(*Cx, *Dx);
+                printf("------------------------\n");
+                invert(*Cx, inverse);
+                mul(inverse, *Cx, x);
+                mul(inverse, *Dx, decoded);
 
-        printf("### Decoded:\n");
-        p(decoded);
+                p(x);
+                printf("------------------------\n");
+                p(inverse, *Dx);
+                printf("------------------------\n");
+                printf("### Decoded:\n");
+                p(*D, decoded);
+        }
 
         res.p("RESULT # ");
 
