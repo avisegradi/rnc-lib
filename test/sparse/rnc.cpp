@@ -140,7 +140,6 @@ WSGatherResult gather_working_set(BlockList &src, BlockList &working_set)
 
         BlockList source_set = src.shallow_copy();
 
-        p(source_set);
         for (size_t i = 0; i < N; ++i)
                 working_set.add(source_set.random_drop(&rnd_state));
 
@@ -176,8 +175,8 @@ WSGatherResult replenish(BlockList &src, BlockList &dst, int target, double A)
         if (!res.success)
                 return res;
 
-        printf("### Working set:\n");
-        p(working_set);
+        //printf("### Working set:\n");
+        //p(working_set);
 
         Matrix *coeffP, *dataP;
         working_set.to_matrices(&coeffP, &dataP);
@@ -250,7 +249,7 @@ try
 
         printf("C: %lu x %lu\n", C->nrows, C->ncols);
         printf("D: %lu x %lu\n", D->nrows, D->ncols);
-        p(orig);
+        //p(orig);
 
         /*
         BlockList sample = blocks.random_sample(15, &rnd_state);
