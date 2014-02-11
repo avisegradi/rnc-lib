@@ -124,8 +124,8 @@ struct WSGatherResult
 
         void p(const char *prefix = "")
         {
-                printf("%ssuccess=%s ; wasted_capacity=%d\n",
-                       prefix, success ? "true" : "false", wasted_capacity);
+                printf("%s%s %d\n",
+                       prefix, success ? "1" : "0", wasted_capacity);
         }
 };
 
@@ -230,8 +230,8 @@ try
         const double F = getdouble(argv[6]);
         const int id = getint(argv[7]);
 
-        printf("%02d MEM file=%s q=%d mode=sim N=%d A=%f T=%d R=%d F=%f\n",
-               id, fname.c_str(), fq_size, N, A, T, R, F);
+        //printf("%02d MEM file=%s q=%d mode=sim N=%d A=%f T=%d R=%d F=%f\n",
+        //       id, fname.c_str(), fq_size, N, A, T, R, F);
 
         File infile(fname, N);
 
@@ -242,13 +242,13 @@ try
         set_identity(identity);
         BlockList blocks = infile.block_list(identity.rows);
 
-        printf("block count: %lu\n", blocks.count());
+        //printf("block count: %lu\n", blocks.count());
 
         Matrix *C, *D;
         blocks.to_matrices(&C, &D);
 
-        printf("C: %lu x %lu\n", C->nrows, C->ncols);
-        printf("D: %lu x %lu\n", D->nrows, D->ncols);
+        //printf("C: %lu x %lu\n", C->nrows, C->ncols);
+        //printf("D: %lu x %lu\n", D->nrows, D->ncols);
         //p(orig);
 
         /*
@@ -283,21 +283,23 @@ try
                 Matrix decoded(N, M);
                 Matrix inverse(N, N);
                 Matrix x(N, N);
-                p(*Cx, *Dx);
-                printf("------------------------\n");
+                //p(*Cx, *Dx);
+                //printf("------------------------\n");
                 invert(*Cx, inverse);
                 mul(inverse, *Cx, x);
                 mul(inverse, *Dx, decoded);
 
-                p(x);
-                printf("------------------------\n");
-                p(inverse, *Dx);
-                printf("------------------------\n");
-                printf("### Decoded:\n");
-                p(*D, decoded);
+                //p(x);
+                //printf("------------------------\n");
+                //p(inverse, *Dx);
+                //printf("------------------------\n");
+                //printf("### Decoded:\n");
+                //p(*D, decoded);
         }
 
-        res.p("RESULT # ");
+        printf("RESULT %d %s %d %d %f %d %d %f ",
+               id, fname.c_str(), fq_size, N, A, T, R, F);
+        res.p();
 
         return 0;
 }
