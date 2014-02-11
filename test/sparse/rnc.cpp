@@ -31,6 +31,7 @@
 #include <mkstr>
 #include <auto_arr_ptr>
 #include <memory>
+#include <string.h>
 #include <sys/time.h>
 #include <test.h>
 
@@ -116,10 +117,8 @@ struct WSGatherResult
 {
         bool success;
         int wasted_capacity;
-        Matrix *inverse;
-        WSGatherResult(size_t N, bool success, int wasted_capacity)
-                : success(success), wasted_capacity(wasted_capacity),
-                  inverse(new Matrix(N, N))
+        WSGatherResult(bool success, int wasted_capacity)
+                : success(success), wasted_capacity(wasted_capacity)
         {}
 
         void p(const char *prefix = "")
@@ -133,7 +132,7 @@ WSGatherResult gather_working_set(BlockList &src, BlockList &working_set)
 {
         const size_t N = (*src.blocks())->coeff_count;
 
-        WSGatherResult result(N, false, 0);
+        WSGatherResult result(false, 0);
 
         if (src.count() < N)
                 return result;
@@ -145,9 +144,10 @@ WSGatherResult gather_working_set(BlockList &src, BlockList &working_set)
 
         for (int i=0; ; ++i) {
                 auto_ptr<Matrix> m(working_set.to_matrix(BlockList::Coefficients));
-                if (matrix::invert(*m, *(result.inverse)))
+                Matrix inverse(N, N);
+                if (matrix::invert(*m, inverse))
                 {
-                        m.release();
+//                        m.release();
                         break;
                 }
 
@@ -163,7 +163,8 @@ WSGatherResult gather_working_set(BlockList &src, BlockList &working_set)
         return result;
 }
 
-WSGatherResult replenish(BlockList &src, BlockList &dst, int target, double A)
+WSGatherResult replenish(BlockList &src, BlockList &dst, int threshold, int target,
+                         double A)
 {
         const size_t N = (*src.blocks())->coeff_count;
         const size_t M = (*src.blocks())->block_length;
@@ -173,6 +174,9 @@ WSGatherResult replenish(BlockList &src, BlockList &dst, int target, double A)
 
         WSGatherResult res = gather_working_set(src, working_set);
         if (!res.success)
+                return res;
+
+        if (src.count() > (unsigned int)threshold)
                 return res;
 
         //printf("### Working set:\n");
@@ -203,6 +207,25 @@ WSGatherResult replenish(BlockList &src, BlockList &dst, int target, double A)
         }
 
         return res;
+}
+
+void prInt(int arr[], int length, int nulls_from)
+{
+        bool first = true;
+
+        for (int i=0; i<nulls_from; ++i)
+        {
+                if (first) first=false;
+                else printf(";");
+                printf("%04d", arr[i]);
+        }
+        for (int i=nulls_from; i<length; ++i)
+        {
+                if (first) first=false;
+                else printf(";");
+                printf("NULL");
+        }
+
 }
 
 int main(int argc, char **argv)
@@ -267,39 +290,43 @@ try
         */
 
         BlockList block_set(N, true);
-        replenish(blocks, block_set, R, A);
+        replenish(blocks, block_set, T, R, A);
 
-        //printf("### Coded set:\n");
-        //p(block_set);
-
-        BlockList reconstruct_sample(N);
-        WSGatherResult res = gather_working_set(block_set, reconstruct_sample);
-
-        if (res.success)
+        const int maxsteps = 50;
+        int wasted[maxsteps];
+        int blockcount[maxsteps];
+        int replenished[maxsteps];
+        int dead_at = -1;
+        for (int i = 0; i < maxsteps; ++i)
         {
-                Matrix *Cx, *Dx;
-                reconstruct_sample.to_matrices(&Cx, &Dx);
+                block_set.random_drop(F, block_set.count(), &rnd_state);
+                int cnt_after_drop = block_set.count();
+                WSGatherResult r = replenish(block_set, block_set, T, R, A);
+                blockcount[i] = block_set.count();
+                replenished[i] = block_set.count() - cnt_after_drop;
 
-                Matrix decoded(N, M);
-                Matrix inverse(N, N);
-                Matrix x(N, N);
-                //p(*Cx, *Dx);
-                //printf("------------------------\n");
-                invert(*Cx, inverse);
-                mul(inverse, *Cx, x);
-                mul(inverse, *Dx, decoded);
-
-                //p(x);
-                //printf("------------------------\n");
-                //p(inverse, *Dx);
-                //printf("------------------------\n");
-                //printf("### Decoded:\n");
-                //p(*D, decoded);
+                if (!r.success)
+                {
+                        dead_at = i;
+                        break;
+                }
+                wasted[i] = r.wasted_capacity;
         }
 
         printf("RESULT %d %s %d %d %f %d %d %f ",
                id, fname.c_str(), fq_size, N, A, T, R, F);
-        res.p();
+        if (dead_at < 0)
+                printf("NULL ");
+        else
+                printf("%d ", dead_at);
+
+        if (dead_at < 0)
+                dead_at = maxsteps;
+
+        prInt(wasted, maxsteps, dead_at);
+        printf(" "); prInt(blockcount, maxsteps, dead_at);
+        printf(" "); prInt(replenished, maxsteps, dead_at);
+        printf("\n");
 
         return 0;
 }
