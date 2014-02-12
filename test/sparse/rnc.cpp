@@ -292,7 +292,7 @@ try
         BlockList block_set(N, true);
         replenish(blocks, block_set, T, R, A);
 
-        const int maxsteps = 50;
+        const int maxsteps = 100;
         int wasted[maxsteps];
         int blockcount[maxsteps];
         int replenished[maxsteps];
