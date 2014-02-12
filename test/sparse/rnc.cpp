@@ -163,21 +163,19 @@ WSGatherResult gather_working_set(BlockList &src, BlockList &working_set)
         return result;
 }
 
-WSGatherResult replenish(BlockList &src, BlockList &dst, int threshold, int target,
+void replenish(BlockList &src, BlockList &dst, int threshold, int target,
                          double A)
 {
         const size_t N = (*src.blocks())->coeff_count;
         const size_t M = (*src.blocks())->block_length;
         const int cnt = target - dst.count();
 
-        BlockList working_set(N);
-
-        WSGatherResult res = gather_working_set(src, working_set);
-        if (!res.success)
-                return res;
-
         if (src.count() > (unsigned int)threshold)
-                return res;
+                return;
+
+        BlockList N_set = src.random_sample(N, &rnd_state);
+
+        const size_t S = int(A * N) + 1;
 
         //printf("### Working set:\n");
         //p(working_set);
@@ -191,7 +189,7 @@ WSGatherResult replenish(BlockList &src, BlockList &dst, int threshold, int targ
         for (int i=0; i<cnt; ++i)
         {
                 Matrix rnd_coeff(1, N);
-                Matrix result_coeff(1, N, false);
+                Matrix result_coeff(1, S, false);
                 Matrix result_data(1, M, false);
                 rand_matr(rnd_coeff, A, &rnd_state);
                 mul(rnd_coeff, coeff, result_coeff);
