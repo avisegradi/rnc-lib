@@ -106,10 +106,10 @@ namespace coding
                    \remarks Choose the initial capacity wisely to avoid
                             high heap overhead and costly reallocations.
 
-                   \remarks Setting \c{cleanup = true} will free the heap
-                            area containing the underlying data. Use this
-                            when the \c BlockList object's life cycle
-                            coincides with that of the data.
+                   \remarks Setting <tt>cleanup = true</tt> will free the
+                            heap area containing the underlying data. Use
+                            this when the \c BlockList object's life
+                            cycle coincides with that of the data.
 
                    \remarks It may be a good idea to have such a \c
                             BlockList object—one whose lifecycle coincides
@@ -152,7 +152,7 @@ namespace coding
                  */
                 inline Block** blocks() const { return _blocklist; }
 
-                /// \brief Input values fo \c to_matrix .
+                /// \brief Input values for \c to_matrix .
                 enum ToMatrixMode {
                         /// \brief The matrix returned will contain the
                         ///        coefficients of the blocks in this set
@@ -166,8 +166,8 @@ namespace coding
                  *         specified information
                  *
                  *  \remark The returned matrix is allocated on the heap
-                 *          by this function; it must be \c{delete}d by the
-                 *          client code.
+                 *          by this function; it must be <tt>delete</tt>d
+                 *          by the client code.
                  */
                 Matrix *to_matrix(ToMatrixMode mode) const;
                 /** \brief Generates two \c Matrix objects; one containing
@@ -179,9 +179,9 @@ namespace coding
                  *  @param data         Output parameter: a pointer to the
                  *                      generated data matrix
                  *
-                 *  \remark The matrices returned will be allocated on the
-                 *          heap by this function; they must be
-                 *          \c{delete}d by the client code.
+                 *  \remark The matrices returned will be allocated on
+                 *          the heap by this function; they must be
+                 *          <tt>delete</tt>d by the client code.
                  */
                 void to_matrices(Matrix **coefficients, Matrix **data) const;
                 BlockList random_sample(size_t size, random::mt_state *state) const;
