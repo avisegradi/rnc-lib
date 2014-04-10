@@ -161,6 +161,8 @@ namespace matrix
             @param res Result address
 
             \test A = mul(A, mul(A, invert(A))) | \f$\exists A^{-1}\f$
+
+            \todo return value for this function
         */
         bool invert(const Matrix &m_in, Matrix &res) throw ();
 
