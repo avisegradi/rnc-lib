@@ -117,11 +117,11 @@ namespace coding
                             file. That is, the \c BlockList can be used as
                             a memory manager for blocks.
 
-                   \remarks Among \c BlockList objects viewing the same
-                            data, at most a single one can have \c cleanup
-                            set to \c true . Having more than one freeing
-                            the same heap space will cause a segmentation
-                            fault.
+                   \remarks Among \c BlockList objects providing view to
+                            the same data, at most a single one can have
+                            \c cleanup set to \c true . Having more than
+                            one freeing the same heap space will cause a
+                            segmentation fault.
                  */
                 BlockList(size_t start_size = 1, bool cleanup = false);
                 /** \brief Cleans up the \c BlockList object. If \c
@@ -164,6 +164,9 @@ namespace coding
 
                 /** \brief Generates a \c Matrix object containing the
                  *         specified information
+                 *
+                 *  @param mode Determines which \c Matrix will be
+                 *              generated. \sa ToMatrixMode
                  *
                  *  \remark The returned matrix is allocated on the heap
                  *          by this function; it must be <tt>delete</tt>d
